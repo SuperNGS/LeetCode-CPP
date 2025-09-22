@@ -118,8 +118,10 @@ int main(int argc, char* argv[]) {
                 cin >> val2;
                 transform(val2.begin(), val2.end(), val2.begin(), ::toupper);
                 cout << "The value of =" << val1 << "+" << val2 << " is " << ss.getValue("=" + val1 + "+" + val2) << endl;
-            } else {
+            } else if(input == "quit" || input == "q") {
                 break;
+            } else {
+                cout << "Unknown command: " << input << endl;
             }
         }
         cout << "Demo ended" << endl;
@@ -141,6 +143,7 @@ int main(int argc, char* argv[]) {
         cout << "A1 + 10 = " << ss.getValue("=A1+10") << endl;
     } else {
         cout << "Invalid mode: " << mode << endl;
+        return -1;
     }
     return 0;
 }
