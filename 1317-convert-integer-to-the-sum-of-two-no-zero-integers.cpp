@@ -40,7 +40,7 @@ public:
 };
 
 int main() {
-    cout << "Convert Tnteger to the Sum of Two No-Zero Integers Demo" << endl << endl;
+    cout << "Convert Integer to the Sum of Two No-Zero Integers Demo" << endl << endl;
     
     Solution s = Solution();
 
