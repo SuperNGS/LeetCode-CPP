@@ -1,0 +1,32 @@
+// Define a header guard to prevent multiple inclusions
+#ifndef UTILITIES_H
+#define UTILITIES_H
+
+#include <iostream>
+#include <string>
+#include <set>
+#include <algorithm>
+
+/* GLOBALS */
+// Mode-matching set for custom mode
+inline std::set<std::string> customMode = {"custom", "[c]ustom", "c", "[c]"};
+// Mode-matching set for demo mode
+inline std::set<std::string> demoMode = {"demo", "[d]emo", "d", "[d]"};
+// Mode-matching set for exit mode
+inline std::set<std::string> exitMode = {"exit", "[e]xit", "e", "[e]"};
+// Mode-matching set for quit mode
+inline std::set<std::string> quitMode = {"quit", "[q]uit", "q", "[q]"};
+
+/* FUNCTIONS */
+// Get mode to run program in from user
+std::string selectMode();
+// Print custom mode banner
+void customModeSelected();
+// Print demo mode banner
+void demoModeSelected();
+// Print quit mode banner and return 0
+int quitModeSelected();
+// Print unknown mode banner and return -1
+int unknownModeSelected(string mode);
+
+#endif
