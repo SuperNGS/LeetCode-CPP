@@ -19,21 +19,29 @@ inline std::set<std::string> quitMode = {"quit", "[q]uit", "q", "[q]"};
 
 /* FUNCTIONS */
 // Print the program start banner
-void printStartBanner(std::string title);
+void printStartBanner(const std::string title);
 // Print the program start banner with time and space complexity
-void printStartBanner(std::string title, std::string timeComplexity, std::string spaceComplexity);
+void printStartBanner(const std::string title, const std::string timeComplexity, const std::string spaceComplexity);
 // Get mode to run program in from user
 std::string selectMode();
+// Bool for if mode is in custom mode
+bool isCustomMode(const std::string mode);
 // Print custom mode banner
 void customModeSelected();
+// Bool for if mode is in demo mode
+bool isDemoMode(const std::string mode);
 // Print demo mode banner
 void demoModeSelected();
+// Bool for if mode is in exit mode
+bool isExitMode(const std::string mode);
 // Print exit mode banner
 void exitModeSelected();
+// Bool for if mode is in quit mode
+bool isQuitMode(const std::string mode);
 // Print quit mode banner and return 0
 int quitModeSelected();
 // Print unknown mode banner and return -1
-int unknownModeSelected(std::string mode);
+int unknownModeSelected(const std::string mode);
 // Convert input to lowercase in-place
 void toLowercase(std::string& input);
 // Convert input to lowercase and store in copy

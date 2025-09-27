@@ -2,13 +2,13 @@
 
 using namespace std;
 
-void printStartBanner(string title) {
+void printStartBanner(const string title) {
     cout << title << " Demo" << endl;
     cout << string(title.length() + 5, '=') << endl;
     cout << endl;
 }
 
-void printStartBanner(string title, string timeComplexity, string spaceComplexity) {
+void printStartBanner(const string title, const string timeComplexity, const string spaceComplexity) {
     cout << title << " Demo" << endl;
     cout << string(title.length() + 5, '=') << endl;
     cout << "Time Complexity: " << timeComplexity << endl;
@@ -29,16 +29,32 @@ string selectMode() {
     return mode;
 }
 
+bool isCustomMode(const string mode) {
+    return customMode.find(mode) != customMode.end();
+}
+
 void customModeSelected() {
     cout << "Custom mode selected" << endl;
+}
+
+bool isDemoMode(const string mode) {
+    return demoMode.find(mode) != demoMode.end();
 }
 
 void demoModeSelected() {
     cout << "Demo mode selected" << endl;
 }
 
+bool isExitMode(const string mode) {
+    return exitMode.find(mode) != exitMode.end();
+}
+
 void exitModeSelected() {
     cout << "Exiting..." << endl;
+}
+
+bool isQuitMode(const string mode) {
+    return quitMode.find(mode) != quitMode.end();
 }
 
 int quitModeSelected() {
@@ -46,7 +62,7 @@ int quitModeSelected() {
     return 0;
 }
 
-int unknownModeSelected(string mode) {
+int unknownModeSelected(const string mode) {
     cout << "Unknown mode selected: " << mode << endl;
     return -1;
 }
