@@ -24,6 +24,8 @@ std::string selectMode();
 void customModeSelected();
 // Print demo mode banner
 void demoModeSelected();
+// Print exit mode banner
+void exitModeSelected();
 // Print quit mode banner and return 0
 int quitModeSelected();
 // Print unknown mode banner and return -1

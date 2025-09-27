@@ -23,6 +23,10 @@ void demoModeSelected() {
     cout << "Demo mode selected" << endl;
 }
 
+void exitModeSelected() {
+    cout << "Exiting..." << endl;
+}
+
 int quitModeSelected() {
     cout << "Quitting..." << endl;
     return 0;
@@ -38,7 +42,7 @@ void toLowercase(string& input) {
     transform(input.begin(), input.end(), input.begin(), ::tolower);
 }
 
-string toLowercaseCopy(string& input, string& copy) {
+void toLowercaseCopy(string& input, string& copy) {
     // Resize the copy to match input
     copy.resize(input.size());
     // Convert the input string to lowercase and store it in copy
