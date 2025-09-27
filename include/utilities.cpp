@@ -32,3 +32,15 @@ int unknownModeSelected(string mode) {
     cout << "Unknown mode selected: " << mode << endl;
     return -1;
 }
+
+void toLowercase(string& input) {
+    // Convert the input string to lowercase in-place
+    transform(input.begin(), input.end(), input.begin(), ::tolower);
+}
+
+string toLowercaseCopy(string& input, string& copy) {
+    // Resize the copy to match input
+    copy.resize(input.size());
+    // Convert the input string to lowercase and store it in copy
+    transform(input.begin(), input.end(), copy.begin(), ::tolower);
+}

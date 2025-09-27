@@ -28,5 +28,9 @@ void demoModeSelected();
 int quitModeSelected();
 // Print unknown mode banner and return -1
 int unknownModeSelected(std::string mode);
+// Convert input to lowercase in-place
+void toLowercase(std::string& input);
+// Convert input to lowercase and store in copy
+void toLowercaseCopy(std::string& input, std::string& copy);
 
 #endif
