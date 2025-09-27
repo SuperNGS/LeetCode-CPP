@@ -42,7 +42,7 @@ void toLowercase(string& input) {
     transform(input.begin(), input.end(), input.begin(), ::tolower);
 }
 
-void toLowercaseCopy(string& input, string& copy) {
+void toLowercase(string& input, string& copy) {
     // Resize the copy to match input
     copy.resize(input.size());
     // Convert the input string to lowercase and store it in copy
