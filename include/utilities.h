@@ -27,6 +27,6 @@ void demoModeSelected();
 // Print quit mode banner and return 0
 int quitModeSelected();
 // Print unknown mode banner and return -1
-int unknownModeSelected(string mode);
+int unknownModeSelected(std::string mode);
 
 #endif
