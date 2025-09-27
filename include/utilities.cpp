@@ -2,6 +2,20 @@
 
 using namespace std;
 
+void printStartBanner(string title) {
+    cout << title << " Demo" << endl;
+    cout << string(title.length() + 5, '=') << endl;
+    cout << endl;
+}
+
+void printStartBanner(string title, string timeComplexity, string spaceComplexity) {
+    cout << title << " Demo" << endl;
+    cout << string(title.length() + 5, '=') << endl;
+    cout << "Time Complexity: " << timeComplexity << endl;
+    cout << "Space Complexity: " << spaceComplexity << endl;
+    cout << endl;
+}
+
 string selectMode() {
     // Prompt the user to enter mode and capture input
     string mode;

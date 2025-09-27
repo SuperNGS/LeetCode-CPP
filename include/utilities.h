@@ -18,6 +18,10 @@ inline std::set<std::string> exitMode = {"exit", "[e]xit", "e", "[e]"};
 inline std::set<std::string> quitMode = {"quit", "[q]uit", "q", "[q]"};
 
 /* FUNCTIONS */
+// Print the program start banner
+void printStartBanner(std::string title);
+// Print the program start banner with time and space complexity
+void printStartBanner(std::string title, std::string timeComplexity, std::string spaceComplexity);
 // Get mode to run program in from user
 std::string selectMode();
 // Print custom mode banner
