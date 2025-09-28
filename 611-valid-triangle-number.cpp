@@ -3,7 +3,12 @@
 #include <iostream>
 #include <set>
 #include <sstream>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use std namespace
 using namespace std;
 
 class Solution {
@@ -39,36 +44,35 @@ public:
 };
 
 int main() {
-    cout << "Valid Triangle Number Demo" << endl << endl;
+    printStartBanner("611. Valid Triangle Number", "O(n^2)", "O(1)");
 
     // Initialize solution
-    Solution s = Solution();
+    Solution s;
 
     // Get the mode to run program in from user
-    string mode;
-    cout << "Select mode ([c]ustom, [d]emo, [q]uit): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    string mode = selectMode();
 
-    // Sets to match the various operation modes (custom, demo, or quit)
-    set<string> customMode = {"custom", "[c]ustom", "c", "[c]"};
-    set<string> demoMode = {"demo", "[d]emo", "d", "[d]"};
-    set<string> quitMode = {"quit", "[q]uit", "q", "[q]"};
-
-    if(customMode.find(mode) != customMode.end()) { // If custom mode, run with user input
-        cout << "Custom mode selected" << endl;
+    if(isCustomMode(mode)) { // If custom mode, run with user input
+        customModeSelected();
 
         // Initialize holder for user input and start looping
         string input;
+
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
         while(true) {
             // Get the comma-separated string of values from user
-            cout << "Enter values as a comma-separated string: ";
-            cin >> input;
-            transform(input.begin(), input.end(), input.begin(), ::tolower);
+            cout << "Enter values as a comma-separated string or enter to exit: ";
+            getline(cin, input);
+            toLowercase(input);
 
-            // If quit entered, exit the loop
-            if(quitMode.find(input) != quitMode.end()) {
+            // If exit entered, exit the loop
+            if(isExitMode(input) || input.empty()) {
+                exitModeSelected();
                 break;
+            } else if(isQuitMode(input)) { // If quit entered, exit program
+                return quitModeSelected();
             }
 
             // Tokenize the inputted string and print
@@ -78,15 +82,19 @@ int main() {
             cout << "Running with values: ";
             while(getline(ss, token, ',')) {
                 cout << token << " ";
-                tokens.push_back(stoi(token));
+                try { // Try to convert token to int and add to tokens vector
+                    tokens.push_back(stoi(token));
+                } catch(...) { // If conversion fails, error and break
+                    cout << "\nError: Invalid input '" << token << "', please enter only integers" << endl;
+                }
             }
             cout << endl;
 
             // Calculate the valid triangle number and print
             cout << "The total number of valid triangles in the set is " << s.triangleNumber(tokens) << endl;
         }
-    } else if(demoMode.find(mode) != demoMode.end()) { // If demo mode, run with demo data
-        cout << "Demo mode selected" << endl;
+    } else if(isDemoMode(mode)) { // If demo mode, run with demo data
+        demoModeSelected();
 
         // Initialize 2D vector of demo data
         vector<vector<int>> demoData =  {
@@ -107,12 +115,10 @@ int main() {
             // Calculate and print the valid triangle number
             cout << "The total number of valid triangles in the set is " << s.triangleNumber(data) << endl;
         }
-    } else if(quitMode.find(mode) != quitMode.end()) { // If quit mode, exit program
-        cout << "Quitting..." << endl;
-        return 0;
+    } else if(isQuitMode(mode)) { // If quit mode, exit program
+        return quitModeSelected();
     } else { // Else, invalid mode. Error
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+        return unknownModeSelected(mode);
     }
     // Exit the program
     return 0;
