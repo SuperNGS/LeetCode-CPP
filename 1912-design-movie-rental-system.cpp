@@ -5,7 +5,12 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <limits>
 
+// Include custom utilities
+#include <utilities.h>
+
+// Use std namespace
 using namespace std;
 
 class MovieRentingSystem {
@@ -89,33 +94,37 @@ MovieRentingSystem initMovieRentingSystem() {
     string input;
 
     // Get number of shops from the user
-    cout << "Input number of shops: ";
-    cin >> input;
-    transform(input.begin(), input.end(), input.begin(), ::tolower);
+    cout << "Input number of shops or press enter to exit: ";
+    getline(cin, input);
+    toLowercase(input);
     
-    // Sets to match quit or exit
-    set<string> quitMode = {"quit", "[q]uit", "q", "[q]"};
-    set<string> exitMode = {"exit", "[e]xit", "e", "[e]"};
-
-    // If user inputted quit or exit, exit the program
-    if(quitMode.find(input) != quitMode.end() || exitMode.find(input) != exitMode.end()) {
-        exit(0);
+    // If user inputted blank, exit, or quit, exit the program
+    if(isExitMode(input) || isQuitMode(input) || input.empty()) {
+        exit(quitModeSelected());
     }
 
-    // Convert input to int n
-    int n = stoi(input);
+    // initialize n
+    int n;
+
+    try { // Convert input to int n
+        n = stoi(input);
+    } catch(...) { // Catch all exceptions
+        cout << "ERROR: Invalid input '" << input << "'. Please only enter numbers." << endl;
+        return initMovieRentingSystem();
+    }
 
     // Initialize 2D vector of entries and start loop
     vector<vector<int>> entries;
     while(true) {
         // Get comma-seperated string representing an entry (shop, movie, price) from user
-        cout << "Enter entry as a comma-seperated string (shop, movie, price) or [e]xit to exit entries: ";
-        cin >> input;
-        transform(input.begin(), input.end(), input.begin(), ::tolower);
+        cout << "Enter entry as a comma-seperated string (shop, movie, price) or press enter to exit entries: ";
+        getline(cin, input);
+        toLowercase(input);
 
-        if(quitMode.find(input) != quitMode.end()) { // If input is quit, exit
-            exit(0);
-        } else if(exitMode.find(input) != exitMode.end()) { // If input is exit, break loop
+        if(isQuitMode(input)) { // If input is quit, exit program
+            exit(quitModeSelected());
+        } else if(input.empty() || isExitMode(input)) { // If input is blank exit, break loop
+            exitModeSelected();
             break;
         }
 
@@ -124,8 +133,22 @@ MovieRentingSystem initMovieRentingSystem() {
         stringstream ss(input);
         string token;
         while(getline(ss, token, ',')) {
-            entry.push_back(stoi(token));
+            try { // Try to convert token to int, if fail, print error and continue
+                entry.push_back(stoi(token));
+            } catch(...) { // Catch all exceptions
+                cout << "ERROR: Invalid input '" << token << "'. Please only enter numbers." << endl;
+                entry.clear();
+                break;
+            }
         }
+
+        // If entry does not have exactly three entries, print error and continue
+        if(entry.size() != 3) { 
+            cout << "ERROR: Invalid input. Please enter exactly three numbers (shop, movie, price)." << endl;
+            continue;
+        }
+
+        // Print the entry entered
         cout << "Entry: Shop = " << entry[0] << ", Movie = " << entry[1] << ", Price = " << entry[2] << endl;
 
         // Push the entry onto entries
@@ -137,21 +160,17 @@ MovieRentingSystem initMovieRentingSystem() {
 }
 
 int main() {
-    cout << "Design Movie Rental System Demo" << endl << endl;
+    printStartBanner("1912. Design Movie Rental System", "O(n log n) for constructor, O(log n) per operation", "O(n)");
 
     // Get the mode to run program in from user input
-    string mode;
-    cout << "Select mode ([c]ustom, [d]emo, or [q]uit): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    string mode = selectMode();
 
-    // Create sets for the different modes
-    set<string> customMode = {"custom", "[c]ustom", "c", "[c]"};
-    set<string> demoMode = {"demo", "[d]emo", "d", "[d]"};
-    set<string> exitMode = {"exit", "[e]xit", "e", "[e]"};
-    set<string> quitMode = {"quit", "[q]uit", "q", "[q]"};
+    if(isCustomMode(mode)) { // Custom mode selected, run with user input
+        customModeSelected();
 
-    if(customMode.find(mode) != customMode.end()) {
+        // Clear input buffer before taking user input
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');    
+
         // Initialize the movie renting system from user input
         MovieRentingSystem mrs = initMovieRentingSystem();
 
@@ -163,11 +182,19 @@ int main() {
         set<string> dropOp = {"drop", "[d]rop", "d", "[d]"};
         set<string> repoOp = {"report", "[rep]ort", "rep", "[rep]"};
 
+        // Initialiaze input holder and loop until exit or quit
         string input;
         while(true) {
-            cout << "Select operation ([i]nit, [r]ent, [d]rop, [rep]ort, or [e]xit): ";
-            cin >> input;
-            transform(input.begin(), input.end(), input.begin(), ::tolower);
+            cout << "Select operation ([i]nit, [r]ent, [d]rop, [rep]ort, or press enter to exit): ";
+            getline(cin, input);
+            toLowercase(input);
+
+            if(input.empty() || isExitMode(input)) { // If blank input or exit, break loop
+                exitModeSelected();
+                break;
+            } else if(isQuitMode(input)) { // If quit entered, exit program
+                return quitModeSelected();
+            }
 
             if(initOp.find(input) != initOp.end()) { // Init operation selected
                 mrs = initMovieRentingSystem();
@@ -175,12 +202,14 @@ int main() {
             } else if(rentOp.find(input) != rentOp.end()) { // Rent operation selected
                 // Get the comma-seperated movie to rent string (shop, movie) from user
                 cout << "Enter movie to rent as a comma-seperated string (shop, movie): ";
-                cin >> input;
-                transform(input.begin(), input.end(), input.begin(), ::tolower);
+                getline(cin, input);
+                toLowercase(input);
 
-                // If quit or exit entered, break loop
-                if(quitMode.find(input) != quitMode.end() || exitMode.find(input) != exitMode.end()) {
+                // If blank or exit entered, break loop
+                if(input.empty() || isExitMode(input)) {
                     break;
+                } else if(isQuitMode(input)) { // If quit entered, exit program
+                    return quitModeSelected();
                 }
 
                 // Tokenize the input string into int vector [shop, movie]
@@ -188,7 +217,19 @@ int main() {
                 stringstream ss(input);
                 string token;
                 while(getline(ss, token, ',')) {
-                    rent.push_back(stoi(token));
+                    try { // Try to convert token to int, if fail, print error and continue
+                        rent.push_back(stoi(token));
+                    } catch(...) { // Catch all exceptions
+                        cout << "ERROR: Invalid input '" << token << "'. Please only enter numbers." << endl;
+                        rent.clear();
+                        break;
+                    }
+                }
+
+                // If rent vector does not have exactly two entries, print error and continue
+                if(rent.size() != 2) { 
+                    cout << "ERROR: Invalid input. Please enter exactly two numbers (shop, movie)." << endl;
+                    continue;
                 }
 
                 // Rent the movie from the shop
@@ -197,12 +238,13 @@ int main() {
             } else if(dropOp.find(input) != dropOp.end()) { // Drop operation selected
                 // Get the comma-seperated movie to drop string (shop, movie) from user
                 cout << "Enter movie to drop as a comma-seperated string (shop, movie): ";
-                cin >> input;
-                transform(input.begin(), input.end(), input.begin(), ::tolower);
+                getline(cin, input);
+                toLowercase(input);
 
-                // If quit or exit entered, break loop
-                if(quitMode.find(input) != quitMode.end() || exitMode.find(input) != exitMode.end()) {
+                if(input.empty() || isExitMode(input)) { // If blank or exit entered, break loop
                     break;
+                } else if(isQuitMode(input)) { // If quit entered, exit program
+                    return quitModeSelected();
                 }
 
                 // Tokenize the input string into int vector [shop, movie]
@@ -210,7 +252,19 @@ int main() {
                 stringstream ss(input);
                 string token;
                 while(getline(ss, token, ',')) {
-                    drop.push_back(stoi(token));
+                    try { // Try to convert token to int, if fail, print error and continue
+                        drop.push_back(stoi(token));
+                    } catch(...) { // Catch all exceptions
+                        cout << "ERROR: Invalid input '" << token << "'. Please only enter numbers." << endl;
+                        drop.clear();
+                        break;
+                    }
+                }
+
+                // If drop vector does not have exactly two entries, print error and continue
+                if(drop.size() != 2) { 
+                    cout << "ERROR: Invalid input. Please enter exactly two numbers (shop, movie)." << endl;
+                    continue;
                 }
 
                 // Drop the movie off at the shop
@@ -235,8 +289,8 @@ int main() {
                 cout << "Invalid operation: " << input << endl;
             }
         }
-    } else if(demoMode.find(mode) != demoMode.end()) {
-        cout << "Demo mode selected" << endl;
+    } else if(isDemoMode(mode)) { // Demo mode selected, run with demo data
+        demoModeSelected();
 
         // Set demo number of shops n
         int n = 3;
@@ -315,12 +369,12 @@ int main() {
         for(const auto& rep : report) {
             cout << "\tShop = " << rep[0] << ", Movie = " << rep[1] << endl;
         }
-    } else if(quitMode.find(mode) != quitMode.end()) { // If quit mode selected, exit program
-        cout << "Quitting..." << endl;
-        return 0;
-    } else { // Else, invalid mode. Error
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+    } else if(isQuitMode(mode)) { // If quit mode selected, exit program
+        return quitModeSelected();
+    } else { // Else, unknown mode. Error
+        return unknownModeSelected(mode);
     }
+
+    // Exit program
     return 0;
 }
