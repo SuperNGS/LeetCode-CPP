@@ -1,83 +1,80 @@
-#include <cstdlib>
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <cctype>
 #include <iostream>
 #include <sstream>
+#include <unordered_set>
+#include <unordered_map>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+
+// Use std namespace
 using namespace std;
 class Solution {
 private:
-    // Helper global, all vowels allowed
-    vector<char> vowels = {'a', 'e', 'i', 'o', 'u'};
     /**
      * Helper method, returns a lowercase copy of a given string s
      */
     string lowercase(string s) {
-        std::transform(s.begin(), s.end(), s.begin(),
-                   [](unsigned char c){ return tolower(c); });
+        transform(s.begin(), s.end(), s.begin(), ::tolower);
         return s;
     };
     /**
-     * Helper method, returns true if c is in vowels and false otherwise
+     * Helper method, replaces vowels in a given string with *
      */
-    bool isVowel(char c) {
-        return find(vowels.begin(), vowels.end(), c) != vowels.end();
-    };
-    /**
-     * Helper method, checks if vowel replacements cause string a to match string b
-     */
-    bool vowelMatch(string a, string b) {
-        string copy = b;
-        for(int i = 0; i < b.length(); i++) {
-            if(isVowel(b[i])) {
-                for(const auto& vowel : vowels) {
-                    copy[i] = vowel;
-                    if(a == copy) {
-                        return true;
-                    }
-                    if(copy[i] == a[i]) { 
-                        break;
-                    }
-                }
+    string devowel(string s) {
+        string res = lowercase(s);
+        for(auto& c : res) {
+            if(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+                c = '*';
             }
         }
-        return copy == a;
-    };
+        return res;
+    }
 public:
     vector<string> spellchecker(vector<string>& wordlist, vector<string>& queries) {
-        // Creates an initial vector of size queries, filling with ""
-        vector<string> answer(queries.size(), "");
+        // Initialize the answer vector to hold results of spellchecker
+        vector<string> answer;
 
-        // Loop through each query
-        for(int i = 0; i < queries.size(); i++) {
-            // Set holder variables for exact, case, and vowel match
-            string exact_match;
-            string case_match;
-            string vowel_match;
+        // Create hash set for exact matches
+        unordered_set<string> exact_match(wordlist.begin(), wordlist.end());
+        // Create hash maps for case and vowel matches
+        unordered_map<string, string> case_map;
+        unordered_map<string, string> vowel_map;
 
-            // Loop through each word in the wordlist, check if it's an exact, case, or vowel match
-            for(const auto& word : wordlist) {
-                if(exact_match == "" && word == queries[i]) {
-                    exact_match = word;
-                    break;
-                }
-                if(case_match == "" && lowercase(word) == lowercase(queries[i]) ) {
-                    case_match = word;
-                }
-                if(vowel_match == "" && vowelMatch(lowercase(word), lowercase(queries[i]))) {
-                    vowel_match = word;
-                }
+        // Loop through each word in the wordlist, add to maps
+        for(const auto& word : wordlist) {
+            // Create lowercase and devoweled versions of the word
+            string lower_word = lowercase(word);
+            string devoweled_word = devowel(word);
+
+            // If lower_word is not already in case_map, add it
+            if(case_map.find(lower_word) == case_map.end()) {
+                case_map[lower_word] = word;
             }
-
-            // Set answer[i] in order of exact, case, or vowel match
-            if(exact_match != ""){
-                answer[i] = exact_match;
-            } else if(case_match != "") {
-                answer[i] = case_match;
-            } else if(vowel_match != "") {
-                answer[i] = vowel_match;
+            // If devoweled_word is not already in vowel_map, add it
+            if(vowel_map.find(devoweled_word) == vowel_map.end()) {
+                vowel_map[devoweled_word] = word;
+            }
+        }
+        
+        // Loop through each query
+        for(const auto& query : queries) {
+            if(exact_match.count(query)) { // If exact match, set answer[i] to query
+                answer.push_back(query);
+                continue;
+            } else if(case_map.count(lowercase(query))) { // Else if case match, set answer[i] to case_map[lowercase(query)]
+                answer.push_back(case_map[lowercase(query)]);
+                continue;
+            } else if(vowel_map.count(devowel(query))) { // Else if vowel match, set answer[i] to vowel_map[devowel(query)]
+                answer.push_back(vowel_map[devowel(query)]);
+                continue;
+            } else { // Else no match, set answer[i] to ""
+                answer.push_back("");
             }
         }
 
@@ -87,37 +84,40 @@ public:
 };
 
 int main() {
-    cout << "Vowel Spellchecker Demo" << endl << endl;
+    printStartBanner("966. Vowel Spellchecker", "O(nL+qL)", "O(nL+qL)");
 
     // Initialize the solution
-    Solution s = Solution();
+    Solution s;
 
     // Prompt user for mode to run in ([c]ustom, [d]emo, or [q]uit)
-    string mode;
-    cout << "Select mode ([c]ustom, [d]emo, or [q]uit): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    string mode = selectMode();
 
-    if(mode == "c" || mode == "custom" || mode == "[c]ustom") { // If custom mode, run with user input
-        cout << "Custom mode selected" << endl;
+    if(isCustomMode(mode)) { // If custom mode, run with user input
+        customModeSelected();
 
         // Set holders for input and a lowercase version of input
         string input;
         string lowerInput;
 
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
         // Loop until user enters 'quit', 'q', or '[q]uit'
         while(true) {
+            customModeSelected();
+            
             // Get the wordlist comma-separated string from user input
-            cout << "Input wordlist as a comma-separated string: ";
-            cin >> input;
+            cout << "Input wordlist as a comma-separated string or press enter to exit: ";
+            getline(cin, input);
 
             // Get a lowercase version of input
-            lowerInput.resize(input.size());
-            transform(input.begin(), input.end(), lowerInput.begin(), ::tolower);
+            toLowercase(input, lowerInput);
 
-            // If lowercased input is 'quit', 'q', or '[q]uit', exit program
-            if(lowerInput == "quit" || lowerInput == "q" || lowerInput == "[q]uit") {
+            if(input.empty() || isExitMode(lowerInput)) { // If input is exit, break loop
+                exitModeSelected();
                 break;
+            } else if(isQuitMode(lowerInput)) {  // If input is quit, exit program
+                return quitModeSelected();
             }
 
             // Break the user input into the wordlist vector
@@ -133,15 +133,16 @@ int main() {
 
             // Get the querylist comma-separated string from user
             cout << "Input querylist as a comma-separated string: ";
-            cin >> input;
+            getline(cin, input);
 
             // Get a lowercase version of input
-            lowerInput.resize(input.size());
-            transform(input.begin(), input.end(), lowerInput.begin(), ::tolower);
+            toLowercase(input, lowerInput);
 
-            // If lowercased input is 'quit', 'q', or '[q]uit', exit program
-            if(lowerInput == "quit" || lowerInput == "q" || lowerInput == "[q]uit") {
+            if(input.empty() || isExitMode(lowerInput)) { // If input is exit, break loop
+                exitModeSelected();
                 break;
+            } else if(isQuitMode(lowerInput)) {  // If input is quit, exit program
+                return quitModeSelected();
             }
 
             // Break the input string into the querylist vector
@@ -162,15 +163,15 @@ int main() {
             cout << "Results: ";
             for(const auto& res : results) {
                 if(res.empty()) {
-                    cout << "NO-MATCH";
+                    cout << "NO-MATCH ";
                 } else {
                     cout << res << " ";
                 }
             }
             cout << endl;
         }
-    } else if(mode == "d" || mode == "demo" || mode == "[d]emo") { // If demo mode, run with demo data
-        cout << "Demo mode selected" << endl;
+    } else if(isDemoMode(mode)) { // If demo mode, run with demo data
+        demoModeSelected();
 
         // Set a 2D vector of wordlists to use
         vector<vector<string>> wordLists = 
@@ -211,7 +212,7 @@ int main() {
             cout << "Results: ";
             for(const auto& res : results) {
                 if(res.empty()) {
-                    cout << "NO-MATCH";
+                    cout << "NO-MATCH ";
                 } else {
                     cout << res << " ";
                 }
@@ -219,13 +220,12 @@ int main() {
             cout << endl;
         }
 
-    } else if(mode == "q" || mode == "quit" || mode == "[q]uit") { // If quit mode, exit the program
-        cout << "Quitting..." << endl;
-        return 0;
+    } else if(isQuitMode(mode)) { // If quit mode, exit the program
+        return quitModeSelected();
     } else { // Else mode is unknown, error
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+        return unknownModeSelected(mode);
     }
+
     // Exit the program
     return 0;
 }
