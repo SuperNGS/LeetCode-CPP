@@ -1,103 +1,146 @@
-#include <cstdlib>
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <sstream>
 #include <iostream>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use std namespace
 using namespace std;
 
 class Solution {
 public:
     int compareVersion(string version1, string version2) {
-        // Create a string stream for each version string, also create two strings to hold tokens
-        stringstream ss1(version1), ss2(version2);
-        string token1, token2;
-        
-        // Loop until a value is returned
-        while (true) {
+        // Initialize indexes i and j
+        int i = 0, j = 0;
+        // Initialize upper bounds of string n and m
+        int n = version1.size(), m = version2.size();
 
-            // Extract the next element from both stringstreams
-            getline(ss1, token1, '.');
-            getline(ss2, token2, '.');
+        // Loop until both i crosses upper bounds n and j crosses upper bounds m
+        while(i < n || j < m) {
 
-            // If both stringstreams are empty, return 0 (Versions are equal)
-            if(token1.empty() && token2.empty()) {
-                return 0;
+            // Initialize counters for version1 and version2
+            long val1 = 0, val2 = 0;
+
+            // Parse the next value in version 1
+            while(i < n && version1[i] != '.') {
+                val1 = val1 * 10 + (version1[i] - '0');
+                i++;
             }
 
-            // Assign val1 and val2 to 0 if no token available or token values as ints if available
-            int val1 = token1.empty() ? 0 : stoi(token1);
-            int val2 = token2.empty() ? 0 : stoi(token2);
-
-            if (val1 < val2) { // If version 1 has fewer revisions, return -1
-                return -1;
-            } else if (val1 > val2) { // If version 2 has fewer revisions, return 1
-                return 1;
-            } else { // Else, clear tokens and loop again
-                token1.clear(); token2.clear();
+            // Parse the next value in version 2
+            while(j < m && version2[j] != '.') {
+                val2 = val2 * 10 + (version2[j] - '0');
+                j++;
             }
+
+            // Compare current parsed versions
+            if(val1 < val2) return -1; // Version 1 has fewer revisions
+            if(val1 > val2) return 1; // Version 2 has more revisions
+
+            // Increment i and j to skip period
+            i++;
+            j++;
         }
+
+        // Versions are equal
+        return 0;
     }
 };
 
 int main() {
-    cout << "Compare Version Numbers Demo" << endl << endl;
-    
-    Solution s = Solution();
+    // Print start banner
+    printStartBanner("165. Compare Version Numbers", "O(n+m)", "O(1)");
 
-    cout << "Select mode (custom or demo): ";
-    string mode;
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    // Initialize solution
+    Solution s;
 
-    if(mode == "custom") {
-        cout << "Custom mode selected" << endl << endl;
+    // Prompt user to select mode
+    string mode = selectMode();
 
+    if(isCustomMode(mode)) { // Custom mode selected, run with user input
+        customModeSelected();
+
+        // Initialize holders for versions entered by user
         string version1;
         string version2;
 
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Loop until user quits or exits
         while(true) {
-            cout << "Please enter version 1 as a period-separated string: ";
-            cin >> version1;
-            if(version1 == "quit" || version1 == "q") {
-                break;
-            }
-            cout << "Please enter version 2 as a period-separated string: ";
-            cin >> version2;
-            if(version2 == "quit" || version2 == "q") {
+            // Get the first version or quit/exit commands
+            cout << "Please enter version 1 as a period-separated string or press enter to exit: ";
+            getline(cin, version1);
+
+            if(isQuitMode(version1)) { // If user entered quit, exit program
+                return quitModeSelected();
+            } else if(version1.empty() || isExitMode(version1)) { // If user entered blank string or exit, exit loop
+                exitModeSelected();
                 break;
             }
 
+            // Get the second version or quit/exit commands from user
+            cout << "Please enter version 2 as a period-separated string: ";
+            getline(cin, version2);
+
+
+            if(isQuitMode(version2)) { // If user entered quit, exit program
+                quitModeSelected();
+            } else if(isExitMode(version2) || version2.empty()) { // If user entered blank string or exit, exit loop
+                exitModeSelected();
+                break;
+            }
+
+            // Run compareVersion() with the user entered versions and store the result
             int result = s.compareVersion(version1, version2);
 
-            if(result == -1) {
+            if(result == -1) { // If result is -1, version one has fewer revisions
                 cout << "Version " << version1 << " has fewer revisions" << endl;
-            } else if (result == 0) {
+            } else if (result == 0) { // If result is 0, versions have equal number of revisions
                 cout << "Version " << version1 << " and version " << version2 << " are equal" << endl;
-            } else {
+            } else { // Else, result is 1, version two has fewer revisions
                 cout << "Version " << version2 << " has fewer revisions" << endl;
             }
         }
 
-    } else if(mode == "demo") {
-        cout << "Demo mode selected" << endl << endl;
+    } else if(isDemoMode(mode)) { // Demo mode selected, run program with demo data
+        demoModeSelected();
 
-        vector<pair<string, string>> versionsToCompare = {{"1.2", "1.10"}, {"1.01", "1.001"}, {"1.0", "1.0.0.0"}};
-        for(const auto& versions : versionsToCompare) {
+        // Initialize vector of int pairs demo data to run test cases
+        vector<pair<string, string>> demoData = {
+                                                            {"1.2", "1.10"},
+                                                            {"1.01", "1.001"},
+                                                            {"1.0", "1.0.0.0"},
+                                                            {"1.999999999999999", "1.100"},
+                                                            {"0", "0.0.0.0"}
+                                                        };
+
+        // For version pairs in demodata, compare them and print results
+        for(const auto& versions : demoData) {
             cout << "Comparing version " << versions.first << " with version " << versions.second << endl;
 
+            // Get the result of comparing the two versions
             int result = s.compareVersion(versions.first, versions.second);
 
-            if(result == -1) {
+            if(result == -1) { // If result is -1, version 1 has fewer revisions
                 cout << "Version " << versions.first << " has fewer revisions" << endl;
-            } else if (result == 0) {
+            } else if (result == 0) { // If result is 0, versions are equal
                 cout << "Version " << versions.first << " and version " << versions.second << " are equal" << endl;
-            } else {
+            } else { // Else result is 1, version 2 has fewer revisions
                 cout << "Version " << versions.second << " has fewer revisions" << endl;
             }
         }
-    } else {
-        cout << "Invalid mode: " << mode;
+    } else if(isQuitMode(mode)) { // Quit mode selected, exit program
+        quitModeSelected();
+    } else { // Else, unknown mode selected, error
+        unknownModeSelected(mode);
     }
+
+    // Exit program
+    return 0;
 }
