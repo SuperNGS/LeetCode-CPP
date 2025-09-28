@@ -1,10 +1,15 @@
 #include <cstdlib>
 #include <string>
-#include <map>
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h> 
+
+// Use std namespace
 using namespace std;
 
 class Solution {
@@ -32,21 +37,26 @@ public:
         result += ".";
 
         // Create a map to hold parts of the remainder
-        map<int,int> remainder;
+        unordered_map<int,int> remainder;
 
-        // While there is still more remainder to process and remainder has not repeated, loop
-        while(num != 0 && remainder.find(num) == remainder.end()) {
+        // While there is still more remainder to process
+        while(num != 0) {
+
+            // If remainder has already been encountered, we have a repeat
+            if(remainder.count(num)) {
+                result.insert(remainder[num], "(");
+                result += ")";
+                break;
+            }
+
+            // Store first occurrence of remainder
             remainder[num] = result.length();
+
+
+            // Calculate remaining remainder
             num *= 10;
             result += to_string(num / denom);
             num %= denom;
-        }
-
-        // If remainder remains (repeat detected), add it to the string
-        if(num != 0) {
-            int repeating = remainder[num];
-            result.insert(repeating, "(");
-            result += ")";
         }
 
         // Return the resulting string
@@ -55,44 +65,67 @@ public:
 };
 
 int main() {
-    cout << "Fraction to Recurring Decimal Demo" << endl << endl;
+    printStartBanner("166. Fraction to Recurring Decimal", "O(d)", "O(d)");
 
-    string mode;
-    cout << "Select mode (custom or demo): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    // Get the mode to run in from the user
+    string mode = selectMode();
 
-    Solution s = Solution();
+    // Initialize the solution
+    Solution s;
 
-    if(mode == "custom" || mode == "c") {
-        cout << "Custom mode selected" << endl;
+    if(isCustomMode(mode)) { // If custom mode selected, run with user input
+        customModeSelected();
 
+        // Create holders for numerator and denominator input from user
         string numerator;
         string denominator;
+
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        // Loop until user enters quit or exit commands
         while(numerator != "quit" && numerator != "q" && denominator != "quit" && denominator != "q") {
-            cout << "Select numerator: ";
-            cin >> numerator;
-            if( numerator == "quit" || numerator == "q" ) {
-                break;
-            }
-            cout << "Select denominator: ";
-            cin >> denominator;
-            if( denominator == "quit" || denominator == "q" ) {
+            cout << "Select numerator or press enter to exit: ";
+            getline(cin, numerator);
+
+
+            if(isQuitMode(numerator)) { // User enterd quit, exit program
+                return quitModeSelected();
+            } else if(numerator.empty() || isExitMode(numerator)) { // User entered exit or blank string, exit loop
+                exitModeSelected();
                 break;
             }
 
+            // Get the denominator from user input
+            cout << "Select denominator or press enter to exit: ";
+            getline(cin, denominator);
+
+            if(isQuitMode(denominator)) { // User enterd quit, exit program
+                return quitModeSelected();
+            } else if(denominator.empty() || isExitMode(denominator)) { // User entered exit or blank string, exit loop
+                exitModeSelected();
+                break;
+            }
+
+            // Print the numerator and denominator as well as the result of fractionToDecimal()
             cout << numerator << " / " << denominator << " = " << s.fractionToDecimal(stoi(numerator), stoi(denominator)) << endl;
         }
-    } else if(mode == "demo" || mode == "d") {
+    } else if(isDemoMode(mode)) { // Demo mode selected, run with demo data
         cout << "Demo mode selected" << endl;
 
-        vector<pair<int, int>> divisions = {{1,4}, {-2,7}, {-1,-3}, {0,20}};
-        for(const auto& division : divisions) {
+        // Initialize 2D vector of demo fractions
+        vector<pair<int, int>> demoData = {{1,4}, {-2,7}, {-1,-3}, {0,20}};
+
+        // Loop over demo data, calculate the repeating decimal result, and print
+        for(const auto& division : demoData) {
             cout << division.first << " / " << division.second << " = " << s.fractionToDecimal(division.first, division.second) << endl;
         }
-    } else {
-        cout << "Unknown mode: " << mode << endl;
-        return -1;
+    } else if(isQuitMode(mode)) { // Quit mode selected, exit program
+        return quitModeSelected();
+    } else { // Else, unknown mode. Error
+        return unknownModeSelected(mode);
     }
+
+    // Exit program
     return 0;
 }
