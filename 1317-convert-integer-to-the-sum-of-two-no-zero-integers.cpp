@@ -3,7 +3,12 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <limits>
 
+// Custom utilities
+#include <utilities.h>
+
+// Using standard namespace
 using namespace std;
 
 class Solution {
@@ -17,7 +22,11 @@ private:
     }
 public:
     vector<int> getNoZeroIntegers(int n) {
+
+        // Initialize a and b
+        int a, b;
         
+        // Loop through all integers from 1 to n-1
         for(int i = 1; i < n; i++) {
             // If i contains a 0, skip
             if(!isNoZero(i)) {
@@ -25,8 +34,8 @@ public:
             }
 
             // Calculate a and b such that b is the complement of a, both summing to n
-            int a = i;
-            int b = n - i;
+            a = i;
+            b = n - i;
 
             // If b is a No-Zero Integer, return a and b
             if( isNoZero(b) ) {
@@ -34,64 +43,83 @@ public:
             }
         }
 
-        // If no result found, return [0, 0]
-        return {0, 0};
+        // Return {a, b} = {0, 0} if no solution is found
+        return {a, b};
     }
 };
 
 int main() {
-    cout << "Convert Integer to the Sum of Two No-Zero Integers Demo" << endl << endl;
-    
-    Solution s = Solution();
+    printStartBanner("1317. Convert Integer to the Sum of Two No-Zero Integers", "O(n log n)", "O(log n)");
 
-    cout << "Select mode (custom or demo): ";
-    string mode;
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    // Initialize solution
+    Solution s;
 
-    if(mode == "custom" || mode == "c") {
+    // Get the mode to run in from user input
+    string mode = selectMode();
+
+    if(isCustomMode(mode)) { // If running in custom mode, run with user input
+        customModeSelected();
+
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        // Create holdeers for user input and valid n entries, loop until exit or quit
+        string input;
         int n;
-        cout << "Choose a value n: ";
-        cin >> n;
-        vector<int> value = s.getNoZeroIntegers(n);
+        while(true) {
+            // Get user-entered n value, lowercase to check for exit or quit
+            cout << "Enter a positive integer value for n or press enter to exit: ";
+            getline(cin, input);
+            toLowercase(input);
+            
+            if(input.empty() || isExitMode(input)) { // If input is empty or exit, break loop
+                exitModeSelected();
+                break;
+            } else if(isQuitMode(input)) { // If quit mode selected, exit program
+                return quitModeSelected();
+            }
 
-        if(value != vector<int>{0, 0}) {
-            cout << "Value " << n << " decomposes into integers " << value[0] << " and " << value[1] << endl;
-        } else {
-            cout << "Value " << n << " can't be decomposed into two no-zero integers" << endl;
+            try {
+                n = stoi(input);
+            } catch(...) {
+                cout << "ERROR: Invalid input. Please enter a positive integer." << endl;
+                continue;
+            }
+
+            // Calculate result of getNoZeroIntegers(n)
+            vector<int> value = s.getNoZeroIntegers(n);
+
+            if(value != vector<int>{0, 0}) { // If result is not {0, 0}, it's a valid decomposition. Print
+                cout << "Value " << n << " decomposes into integers " << value[0] << " and " << value[1] << endl;
+            } else { // Else, no valid decomposition found. Print
+                cout << "Value " << n << " can't be decomposed into two no-zero integers" << endl;
+            }
+
         }
-    } else if(mode == "demo" || mode == "d") {
-        int n = 5;
-        cout << "Using n = " << n << endl;
-        vector<int> value = s.getNoZeroIntegers(n);
+    } else if(isDemoMode(mode)) { // If running in demo mode, run with demo data
+        // Initialize vector of n values to use
+        vector<int> demoData = {5, 31, 100};
+        // Initialize result vector for storing results
+        vector<int> result;
 
-        if(value != vector<int>{0, 0}) {
-            cout << "Value " << n << " decomposes into integers " << value[0] << " and " << value[1] << endl;
-        } else {
-            cout << "Value " << n << " can't be decomposed into two no-zero integers" << endl;
+        for(const auto& n : demoData) {
+            cout << "Using n = " << n << endl;
+
+            // Calculate result of getNoZeroIntegers(n)
+            result = s.getNoZeroIntegers(n);
+
+            if(result != vector<int>{0, 0}) { // If result is not {0, 0}, valid decomposition found. Print
+                cout << "Value " << n << " decomposes into integers " << result[0] << " and " << result[1] << endl;
+            } else { // Else, no valid decomposition found. Print
+                cout << "Value " << n << " can't be decomposed into two no-zero integers" << endl;
+            }
         }
-
-        n = 31;
-        cout << "Using n = " << n << endl;
-        value = s.getNoZeroIntegers(n);
-
-        if(value != vector<int>{0, 0}) {
-            cout << "Value " << n << " decomposes into integers " << value[0] << " and " << value[1] << endl;
-        } else {
-            cout << "Value " << n << " can't be decomposed into two no-zero integers" << endl;
-        }
-
-        n = 100;
-        cout << "Using n = " << n << endl;
-        value = s.getNoZeroIntegers(n);
-
-        if(value != vector<int>{0, 0}) {
-            cout << "Value " << n << " decomposes into integers " << value[0] << " and " << value[1] << endl;
-        } else {
-            cout << "Value " << n << " can't be decomposed into two no-zero integers" << endl;
-        }
-    } else {
-        cout << "Invalid mode: " << mode;
+    } else if(isQuitMode(mode)) { // If quit mode selected, exit program
+        return quitModeSelected();
+    } else { // Else, unknown mode. Error
+        return unknownModeSelected(mode);
     }
+
+    // Exit the program
     return 0;
 }
