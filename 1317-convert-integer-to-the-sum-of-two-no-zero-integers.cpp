@@ -79,9 +79,9 @@ int main() {
                 return quitModeSelected();
             }
 
-            try {
+            try { // Attempt to convert input to integer
                 n = stoi(input);
-            } catch(...) {
+            } catch(...) { // If conversion fails, error and continue
                 cout << "ERROR: Invalid input. Please enter a positive integer." << endl;
                 continue;
             }
