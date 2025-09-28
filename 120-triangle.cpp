@@ -1,10 +1,14 @@
-#include <cstdlib>
 #include <vector>
 #include <iostream>
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use std namespace
 using namespace std;
 
 class Solution {
@@ -24,24 +28,24 @@ public:
 };
 
 int main() {
-    cout << "Triangle Demo" << endl << endl;
+    printStartBanner("120. Triangle", "O(n^2)", "O(1)");
 
-    Solution s = Solution();
+    // Initialize solution
+    Solution s;
     
-    // Prompt the user to select a mode([c]ustom, [d]emo, [q]uit)
-    string mode;
-    cout << "Select mode ([c]ustom, [d]emo, or [q]uit): ";
-    cin >> mode;
+    // Get the mode to run in from the user
+    string mode = selectMode();
 
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    if(isCustomMode(mode)) { // If custom mode selected, run program with user input
+        customModeSelected();
 
-    if(mode == "custom" || mode == "c") { // If mode 'custom' or 'c' selected, run program with user input
-        cout << "Custom mode selected" << endl;
-
-        // Create a holder variable for user input
+        // Create a holder variable for user input and loop until user quits or exits
         string input;
 
-        // While user has not entered "quit" or "q", loop
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // While user has not entered quit or exit, loop
         while(true) {
             // Create a 2D vector to hold the triangle
             vector<vector<int>> triangle;
@@ -49,43 +53,64 @@ int main() {
             // Incrementer for row number
             int i = 1;
 
-            // While user has entered 'e' for exit, loop
+            // While user hasnt entered exit or quit, loop
             while(true) {
                 // Get the comma-separated string representing a row from the user
-                cout << "Enter values for row " << i << " as a comma-seperated string (enter 'e' to exit): ";
-                cin >> input;
-                transform(input.begin(), input.end(), input.begin(), ::tolower);
+                cout << "Enter values for row " << i << " as a comma-seperated string or press enter to exit: ";
+                getline(cin, input);
+                toLowercase(input);
 
-                if(input == "e") { // If input was 'e', break
+                if(isExitMode(input) || input.empty()) { // If input was exit, break
                     break;
-                } else if(input == "quit" || input == "q") { // If input was 'quit' or 'q', exit program
-                    cout << "Quitting..." << endl;
-                    return 0;
+                } else if(isQuitMode(input)) { // If input was quit exit program
+                    return quitModeSelected();
                 }
 
                 // Break the comma-separated string into a vector of ints
                 vector<int> row;
                 stringstream ss(input);
                 string token;
-                cout << "Row " << i << ": ";
+                cout << "Row #" << i << ": ";
                 while(getline(ss, token, ',')) {
                     cout << token << " ";
                     row.push_back(stoi(token));
                 }
                 cout << endl;
 
+                // If the row size is not equal to the row number, error and break
+                if(row.size() != i) {
+                    cout << "Error: Row " << i << " must have " << i << " values" << endl;
+                    break;
+                }
+
                 // Add the row vector to the triangle and increment the row number
                 triangle.push_back(row);
                 i++;
+            }
+
+            if(triangle.size() == 0) { // If triangle is empty, break
+                cout << "No triangle entered, exiting" << endl;
+                break;
             }
             
             // Calculate and print the shortest path
             cout << "Shortest path is: " << s.minimumTotal(triangle) << endl;
         }
     } else if(mode == "demo" || mode == "d") { // If mode 'demo' or 'd' selected, run program with demo data
-        cout << "Demo mode selected" << endl;
+        demoModeSelected();
+
         // Create a 3D vector of ints to represent the demo triangles
-        vector<vector<vector<int>>> triangles = {{{1}, {2, 3}, {4, 5, 6}}, {{3}, {-7, -1}, {8, 9, -10}}, {{-10}, {7, 1}, {8, 9, 13}}};
+        vector<vector<vector<int>>> triangles = {
+            {
+                {1}, {2, 3}, {4, 5, 6}
+            },
+            {
+                {3}, {-7, -1}, {8, 9, -10}
+            },
+            {
+                {-10}, {7, 1}, {8, 9, 13}
+            }
+        };
 
         // Loop through each triangle
         for(int i = 0; i < triangles.size(); i++) {
@@ -106,13 +131,12 @@ int main() {
             cout << "The shortest path is " << s.minimumTotal(triangle) << endl << endl;
         }
 
-    } else if(mode == "quit" || mode == "q") { // If mode 'quit' or 'q' selected, exit program
-        cout << "Quitting..." << endl;
-        return 0;
+    } else if(isQuitMode(mode)) { // If quit mode selected, exit program
+        return quitModeSelected();
     } else { // Else invalid mode, error
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+        return unknownModeSelected(mode);
     }
+
     // Exit program
     return 0;
 }
