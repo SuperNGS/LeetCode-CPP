@@ -1,8 +1,12 @@
-#include <cstdlib>
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use std namespace
 using namespace std;
 
 class Solution {
@@ -32,31 +36,35 @@ public:
 };
 
 int main() {
-    cout << "Find N Unique Integers Sum up to Zero Demo" << endl << endl;
+    printStartBanner("1304. Find N Unique Integers Sum up to Zero", "O(n)", "O(n)");
 
     // Initialize the solution
-    Solution s = Solution();
+    Solution s;
 
     // Get the mode to run in from user
-    string mode;
-    cout << "Select mode (custom or demo): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    string mode = selectMode();
 
-    if(mode == "custom" || mode == "c") { // If custom or c selected, run solution with user input
-        cout << "Custom mode selected" << endl;
+    if(isCustomMode(mode)) { // If custom mode selected, run solution with user input
+        customModeSelected();
 
-        // Create holder for input and loop
+        // Create holder for input
         string input;
+
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        // Loop until user breaks loop
         while(true) {
             // Get n value from user input
-            cout << "Select n value: ";
-            cin >> input;
-            transform(input.begin(), input.end(), input.begin(), ::tolower);
+            cout << "Select n value or press enter to exit: ";
+            getline(cin, input);
+            toLowercase(input);
 
-            // If input is quit or q, exit loop
-            if(input == "quit" || input == "q") {
+            if(input.empty() || isExitMode(input)) { // If input is exit, break loop
+                exitModeSelected();
                 break;
+            } else if(isQuitMode(input)) {  // If input is quit, exit program
+                return quitModeSelected();
             }
 
             // Calculate the N unique integers summing up to zero, store in vector
@@ -70,8 +78,8 @@ int main() {
             cout << endl;
 
         }
-    } else if(mode == "demo" || mode == "d") { // if demo or d selected, run solution with demo data
-        cout << "Demo mode selected" << endl;
+    } else if(isDemoMode(mode)) { // if demo mode selected, run solution with demo data
+        demoModeSelected();
 
         // Create a vector<int> of demo n values to use
         vector<int> nValues = {3, 5, 10, 15};
@@ -86,13 +94,12 @@ int main() {
             }
             cout << endl;
         }
-    } else if(mode == "quit" || mode == "q") { // If quit or q selected, exist program
-        cout << "Quitting..." << endl;
-        return 0;
+    } else if(isQuitMode(mode)) { // If quit mode selected, exit program
+        return quitModeSelected();
     } else { // Else unknown mode selected, error
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+        return unknownModeSelected(mode);
     }
 
+    // Exit the program
     return 0;
 }
