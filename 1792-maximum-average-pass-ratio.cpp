@@ -2,6 +2,7 @@
 #include <vector>
 #include <queue>
 #include <iomanip>
+#include <limits>
 
 // Include custom utilities
 #include <utilities.h>
@@ -68,33 +69,36 @@ public:
 };
 
 int main() {
-    cout << "Maximum Average Pass Ratio Demo" << endl << endl;
+    printStartBanner("1792. Maximum Average Pass Ratio", "O((n + k) log n)", "O(n)");
 
     // Get the mode to run program in from the user
     string mode = selectMode();
     
-    // Initialize solutiom
-    Solution s = Solution();
+    // Initialize solution
+    Solution s;
 
-    if(customMode.find(mode) != customMode.end()) { // Custom mode selected, run with user input
+    if(isCustomMode(mode)) { // Custom mode selected, run with user input
         customModeSelected();
 
         // Initialize a 2D vector of classes and an int for extra students
         vector<vector<int>> classes;
         int extraStudents;
 
+        // Clear input buffer before taking user input
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
         // Create a holder for user input and loop until exit called
         string input;
         while(true) {
             // Get the class pair (pass, total) from user input
-            cout << "Enter class as a comma-separated string (pass, total) or [e]xit to stop entries: ";
-            cin >> input;
-            toLowercase(input);
+            cout << "Enter class as a comma-separated string (pass, total) or press enter to stop entries: ";
+            getline(cin, input);
+            toLowercase(input); // Convert input to lowercase for easier comparison
 
-            if(exitMode.find(input) != exitMode.end()) { // Exit mode selected, break loop
+            if(input.empty() || isExitMode(input)) { // if blank input or exit mode selected, stop taking entries
                 exitModeSelected();
                 break;
-            } else if(quitMode.find(input) != quitMode.end()) { // Quit mode selected, exit program
+            } else if(isQuitMode(input)) { // If quit mode selected, exit program
                 return quitModeSelected();
             }
 
@@ -117,7 +121,7 @@ int main() {
 
         // Print the result of calculating Max Average Pass Ratio
         cout << "Max average pass ratio is: " << s.maxAverageRatio(classes, extraStudents) << endl;
-    } else if(demoMode.find(mode) != demoMode.end()) { // Demo mode selected, run with demo data
+    } else if(isDemoMode(mode)) { // Demo mode selected, run with demo data
         demoModeSelected();
 
         // Initialize a 3D vector of demoClasses to use for running demos
@@ -144,7 +148,7 @@ int main() {
             // Print the result of calculating Max Average Pass Ratio
             cout << "\tMax average pass ratio is: " << s.maxAverageRatio(demoClasses[i], demoExtraStudents[i]) << endl;
         }
-    } else if(quitMode.find(mode) != quitMode.end()) { // Quit mode selected, exit program
+    } else if(isQuitMode(mode)) { // Quit mode selected, exit program
         return quitModeSelected();
     } else { // Else, unknown mode. Error
         return unknownModeSelected(mode);
