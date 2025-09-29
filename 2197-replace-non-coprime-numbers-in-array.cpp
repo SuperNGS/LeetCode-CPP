@@ -91,7 +91,6 @@ int main() {
                     continue;
                 }
             }
-            cout << endl;
 
             // Print input values
             cout << "Running with values: ";
