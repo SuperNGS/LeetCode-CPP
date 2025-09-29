@@ -46,5 +46,9 @@ int unknownModeSelected(const std::string mode);
 void toLowercase(std::string& input);
 // Convert input to lowercase and store in copy
 void toLowercase(std::string& input, std::string& copy);
+// Convert input to uppercase in-place
+void toUppercase(std::string& input);
+// Convert input to uppercase and store in copy
+void toUppercase(std::string& input, std::string& copy);
 
 #endif

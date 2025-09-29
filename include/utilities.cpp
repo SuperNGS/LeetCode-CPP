@@ -78,3 +78,15 @@ void toLowercase(string& input, string& copy) {
     // Convert the input string to lowercase and store it in copy
     transform(input.begin(), input.end(), copy.begin(), ::tolower);
 }
+
+void toUppercase(string& input) {
+    // Convert the input string to uppercase in-place
+    transform(input.begin(), input.end(), input.begin(), ::toupper);
+}
+
+void toUppercase(string& input, string& copy) {
+    // Resize the copy to match input
+    copy.resize(input.size());
+    // Convert the input string to uppercase and store it in copy
+    transform(input.begin(), input.end(), copy.begin(), ::toupper);
+}
