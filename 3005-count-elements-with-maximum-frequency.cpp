@@ -5,7 +5,12 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use standard namespace
 using namespace std;
 
 class Solution {
@@ -39,25 +44,33 @@ public:
 };
 
 int main() {
-    cout << "Count Elements with Maximum Frequency Demo" << endl << endl;
+    printStartBanner("3005. Count Elements With Maximum Frequency", "O(n)", "O(n)");
 
-    Solution s = Solution();
+    // Initialize solution
+    Solution s;
 
-    // Prompt user to select mode, custom or demo
-    string mode;
-    cout << "Select mode (custom or demo): ";
-    cin >> mode;
+    // Prompt user to select mode: custom, demo or quit
+    string mode = selectMode();
 
-    if(mode == "custom" || mode == "c") {
+    if(isCustomMode(mode)) { // If custom mode selected, run with user input
+        customModeSelected();
+
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Initialize input string and start loop
         string input;
         while(input != "quit" || input != "q") {
             // Prompt user to enter comma-separated string of values
-            cout << "Enter values as a comma-separated string: ";
-            cin >> input;
+            cout << "Enter values as a comma-separated string or press enter to exit: ";
+            getline(cin, input);
+            toLowercase(input);
 
-            // If user types 'quit' or 'q', exit the loop
-            if(input == "quit" || input == "q") {
+            if(isExitMode(input)) { // If no input entered or exit mode selected, break loop
+                exitModeSelected();
                 break;
+            } else if(isQuitMode(input)) { // If quit mode selected, exit program
+                return quitModeSelected();
             }
 
             // Replace all commas with spaces
@@ -70,12 +83,17 @@ int main() {
             int value;
             
             // Extract integers directly from the stream, print to console
-            cout << "Calculating max frequency of integers: ";
-            while (iss >> value) {
-                cout << value << " ";
-                values.push_back(value);
+            try {
+                cout << "Calculating max frequency of integers: ";
+                while (iss >> value) {
+                    cout << value << " ";
+                    values.push_back(value);
+                }
+                cout << endl;
+            } catch(...) { // If conversion fails, print error and skip to next iteration of loop
+                cout << "Invalid input: " << input << ". Please enter only integers. Skipping..." << endl;
+                continue;
             }
-            cout << endl;
 
             // Calculate max frequency
             cout << "Max frequency is " << s.maxFrequencyElements(values) << endl;
@@ -83,7 +101,9 @@ int main() {
         }
 
 
-    } else if(mode == "demo" || mode == "d") {
+    } else if(isDemoMode(mode)) { // If demo mode selected, run with demo data
+        demoModeSelected();
+
         // Create a vector of vectors to hold demo data
          vector<vector<int>> valuesVector = {{1, 2, 3, 4, 5}, {1,2,2,3,4,4,5,6}, {1,1,2,2,3,3,4,5,5,6,6,6,7}};
         
@@ -95,11 +115,15 @@ int main() {
             }
             cout << endl;
 
+            // Calculate and print max frequency
             cout << "Max frequency is " << s.maxFrequencyElements(values) << endl;
         }
-    } else {
-        cout << "Unknown mode: " << mode;
-        return 1;
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If quit or exit mode selected, exit program
+        return quitModeSelected();
+    } else { // Else, unknown mode, error
+        return unknownModeSelected(mode);
     }
+
+    // Exit program
     return 0;
 }
