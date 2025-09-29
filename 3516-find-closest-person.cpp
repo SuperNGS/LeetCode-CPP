@@ -1,9 +1,13 @@
-#include <cstdlib>
 #include <iostream>
 #include <algorithm>
 #include <vector>
 #include <tuple>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use standard namespace
 using namespace std;
 
 class Solution {
@@ -28,49 +32,81 @@ public:
 };
 
 int main() {
-    cout << "Cind Closest Person Demo" << endl << endl;
+    printStartBanner("3541. Find Closest Person", "O(1)", "O(1)");
 
-    // Initialize the Solution object
-    Solution s = Solution();
+    // Initialize the Solution
+    Solution s;
 
     // Get the mode to run in from the user
-    string mode;
-    cout << "Select mode (custom or demo): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    string mode = selectMode();
     
-    if(mode == "custom" || mode == "c") { // If mode is "custom" or "c", custom mode selected
-        string input;
+    if(isCustomMode(mode)) { // If custom mode selected, run with user input
+        customModeSelected();
 
-        while(input != "quit" && input != "q") {
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Initialize input string and start loop
+        string input;
+        while(true) {
             // Get the x value from the user
             int x;
-            cout << "Enter value for x: ";
-            cin >> input;
-            if(input == "quit" || input == "q") {
+            cout << "Enter value for x or press enter to exit: ";
+            getline(cin, input);
+            toLowercase(input);
+
+            if(isQuitMode(input)) { // If quit mode selected, exit program
+                return quitModeSelected();
+            } else if(input.empty() || isExitMode(input)) { // If no input entered or exit mode selected, break loop
+                exitModeSelected();
                 break;
-            } else {
+            }
+
+            try {
                 x = stoi(input);
+            } catch(...) { // If conversion fails, print error and skip to next iteration of loop
+                cout << "Invalid input: " << input << ". Please enter only integers. Skipping..." << endl;
+                continue;
             }
 
             // Get the y value from the user
             int y;
-            cout << "Enter value for y: ";
-            cin >> input;
-            if(input == "quit" || input == "q") {
+            cout << "Enter value for y or press enter to quit: ";
+            getline(cin, input);
+            toLowercase(input);
+            
+            if(isQuitMode(input)) { // If quit mode selected, exit program
+                return quitModeSelected();
+            } else if(input.empty() || isExitMode(input)) { // If no input entered or exit mode selected, break loop
+                exitModeSelected();
                 break;
-            } else {
+            }
+
+            try {
                 y = stoi(input);
+            } catch(...) { // If conversion fails, print error and skip to next iteration of loop
+                cout << "Invalid input: " << input << ". Please enter only integers. Skipping..." << endl;
+                continue;
             }
 
             // Get the z value from the user
             int z;
-            cout << "Enter value for z: ";
-            cin >> input;
-            if(input == "quit" || input == "q") {
+            cout << "Enter value for z or press enter to quit: ";
+            getline(cin, input);
+            toLowercase(input);
+
+            if(isQuitMode(input)) { // If quit mode selected, exit program
+                return quitModeSelected();
+            } else if(input.empty() || isExitMode(input)) { // If no input entered or exit mode selected, break loop
+                exitModeSelected();
                 break;
-            } else {
+            }
+
+            try {
                 z = stoi(input);
+            } catch(...) { // If conversion fails, print error and skip to next iteration of loop
+                cout << "Invalid input: " << input << ". Please enter only integers. Skipping..." << endl;
+                continue;
             }
 
             // Compute whose closer: x, y, or both equal
@@ -105,6 +141,8 @@ int main() {
                 cout << "x and y are equally close to z" << endl;
             }
         }
+    } else if(isQuitMode(mode)) { // If quit mode selected, exit program
+        return quitModeSelected();
     } else { // If mode matchest none of the above, print and return error
         cout << "Invalid mode: " << mode;
         return -1;
