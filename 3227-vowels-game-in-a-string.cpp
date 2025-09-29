@@ -3,7 +3,12 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use standard namespace
 using namespace std;
 
 class Solution {
@@ -57,44 +62,54 @@ public:
 };
 
 int main() {
-    cout << "Vowels Game in a String Demo" << endl << endl;
+    printStartBanner("3227. Vowels Game in a String", "O(n^2)", "O(n)");
 
-    string mode;
-    cout << "Select mode (custom or demo): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    // Initialize solution
+    Solution s;
 
-    Solution s = Solution();
+    // Get mode to run in from user (custom, demo, or quit)
+    string mode = selectMode();
 
-    if(mode == "custom" || mode == "c") {
+    if(isCustomMode(mode)) { // If mode is custom, run with user-provided data
+        customModeSelected();
+
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Initialize input string + lowercase copy and start loop
         string input;
         string lowerInput;
-
         while(true) {
-            cout << "Enter word to use: ";
-            cin >> input;
-            lowerInput.resize(input.size());
-            transform(input.begin(), input.end(), lowerInput.begin(), ::tolower);
+            cout << "Enter word to use or press enter to exit: ";
+            getline(cin, input);
+            toLowercase(input, lowerInput);
 
-            if(lowerInput == "quit" || lowerInput == "q") {
+            if(isExitMode(lowerInput)) { // If no input entered or exit mode selected, break loop
+                exitModeSelected();
                 break;
+            } else if(isQuitMode(lowerInput)) { // If quit mode selected, exit program
+                return quitModeSelected();
             }
 
+            // Print the winner of the vowel game with the provided word
             cout << "Winner of vowel game with word = " << input << ": " << (s.doesAliceWin(input) ? "Alice" : "Bob") << endl;
         }
-    } else if(mode == "demo" || mode == "d") {
+    } else if(isDemoMode(mode)) { // If mode is demo, run with demo data
+        demoModeSelected();
+
+        // Initialize demo data as a vector of words
         vector<string> words = {"leetcoder", "bbcd", "helloworld"};
 
+        // Loop through each word of demo data and print the winner of the vowel game
         for(const auto& word : words) {
             cout << "Winner of vowel game with word = " << word << ": " << (s.doesAliceWin(word) ? "Alice" : "Bob") << endl;
         }
-    } else if(mode == "quit" || mode == "q") {
-        cout << "Quitting..." << endl;
-        return 0;
-    } else {
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+    } else if(isQuitMode(mode)) { // If mode is quit, exit program
+        return quitModeSelected();
+    } else { // Else, unknown mode, error
+        return unknownModeSelected(mode);
     }
 
+    // Exit program
     return 0;
 }
