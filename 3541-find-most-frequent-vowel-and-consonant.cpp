@@ -79,7 +79,7 @@ int main() {
         // Loop until user enters blank input, quit, or exit
         while(true) {
             // Get the word to calculate max frequency sum from user
-            cout << "Select word to calculate max frequency sum: ";
+            cout << "Select word to calculate max frequency sum or press enter to exit: ";
             getline(cin, input);
 
             // Get lowercase version of input
