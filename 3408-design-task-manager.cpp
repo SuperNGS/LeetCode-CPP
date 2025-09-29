@@ -5,7 +5,12 @@
 #include <algorithm>
 #include <set>
 #include <sstream>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use standared namespace
 using namespace std;
 
 class TaskManager {
@@ -101,12 +106,12 @@ TaskManager initTaskManager() {
     while(true) {
         // Get the comma-seperated task string from the user
         cout << "Input task as a comma-seperated string (UserID, TaskID, Priority) or [e]xit to stop entries: ";
-        cin >> input;
-        transform(input.begin(), input.end(), input.begin(), ::tolower);
+        getline(cin, input);
+        toLowercase(input);
 
-        if(quitMode.find(input) != quitMode.end()) { // If quit entered, exit program
+        if(isQuitMode(input)) { // If quit entered, exit program
             exit(0);
-        } else if(exitMode.find(input) != exitMode.end()) { // If exit entered, break out of loop
+        } else if(isExitMode(input)) { // If exit entered, break out of loop
             break;
         }
 
@@ -115,8 +120,20 @@ TaskManager initTaskManager() {
         stringstream ss(input);
         string token;
         while(getline(ss, token, ',')) {
-            task.push_back(stoi(token));
+            try {
+                task.push_back(stoi(token));
+            } catch(...) { // If conversion fails, print error and skip to next iteration of loop
+                cout << "Invalid input: " << token << ". Please enter only integers. Skipping..." << endl;
+                task.clear();
+                break;
+            }
         }
+
+        if(task.size() != 3) { // If task does not contain exactly 3 integers, print error and continue loop
+            cout << "ERROR: Please enter exactly three integers separated by commas. Skipping..." << endl;
+            continue;
+        }
+
         cout << "Task: UserID = " << task[0] << ", TaskID = " << task[1] << ", Priority = " << task[2] << endl;
         tasks.push_back(task);
     }
@@ -125,25 +142,13 @@ TaskManager initTaskManager() {
 }
 
 int main() {
-    // Print program information
-    cout << "Design Task Manager Demo" << endl;
-    cout << "Time Complexity: O(log(n)) for Add, Edit, ExecTop and O(1) for Rmv" << endl;
-    cout << "Space Complexity: O(n)" << endl;
-    cout << endl;
+    printStartBanner("3408. Design Task Manager", "O(log(n)) for Add, Edit, ExecTop and O(1) for Rmv", "O(n)");
 
-    // Get mode to run program in from user (custom, demo, or quit)
-    string mode;
-    cout << "Select mode ([c]ustom, [d]emo, or [q]uit): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    // Get mode to run program in from user
+    string mode = selectMode();
 
-    // Create sets to match the different modes
-    set<string> customMode = {"custom", "[c]ustom", "c", "[c]"};
-    set<string> demoMode = {"demo", "[d]emo", "d", "[d]"};
-    set<string> quitMode = {"quit", "[q]uit", "q", "[q]"};
-
-    if(customMode.find(mode) != customMode.end()) { // Custom mode selected, run with user input
-        cout << "Custom mode selected" << endl;
+    if(isCustomMode(mode)) { // Custom mode selected, run with user input
+        customModeSelected();
 
         // Initialize the TaskManager
         TaskManager tm = initTaskManager();
@@ -155,24 +160,30 @@ int main() {
         set<string> rmvOp = {"remove", "[r]emove", "rmv", "[r]mv", "r", "[r]"};
         set<string> execOp = {"execute", "[ex]ecute", "exec", "[ex]ec", "ex", "[ex]"};
 
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Create a holder for user input and loop
         string input;
         while(true) {
             // Get the operation to run from the user
-            cout << "Select operation ([i]nit, [a]dd, [e]dit, [r]emove, [ex]ecute, or [q]uit): ";
-            cin >> input;
-            transform(input.begin(), input.end(), input.begin(), ::tolower);
+            cout << "Select operation ([i]nit, [a]dd, [e]dit, [r]emove, [ex]ecute) or press enter to quit: ";
+            getline(cin, input);
+            toLowercase(input);
 
             if(initOp.find(input) != initOp.end()) { // Init operation selected
                 tm = initTaskManager();
             } else if(addOp.find(input) != addOp.end()) { // Add operation selected
                 // Get the comma-seperated task string (UserID, TaskID, Priority) from the user
-                cout << "Enter the comma-seperated task string (UserID, TaskID, Priority) to add: ";
-                cin >> input;
-                transform(input.begin(), input.end(), input.begin(), ::tolower);
+                cout << "Enter the comma-seperated task string (UserID, TaskID, Priority) to add or press enter to exit: ";
+                getline(cin, input);
+                toLowercase(input);
 
-                // if quit mode selected, break
-                if(quitMode.find(input) != quitMode.end()) {
-                    break;
+                if(isExitMode(input)) { // if exit mode selected, continue
+                    exitModeSelected();
+                    continue;
+                }else if(isQuitMode(input)) { // if quit mode selected, exit program
+                    return quitModeSelected();
                 }
 
                 // Tokenize input string into ints, push back to task
@@ -180,7 +191,18 @@ int main() {
                 stringstream ss(input);
                 string token;
                 while(getline(ss, token, ',')) {
-                    task.push_back(stoi(token));
+                    try { // Attempt to convert each token to an integer and add to task vector
+                        task.push_back(stoi(token));
+                    } catch(...) { // If conversion fails, print error and skip to next iteration of loop
+                        cout << "Invalid input: " << token << ". Please enter only integers. Skipping..." << endl;
+                        task.clear();
+                        break;
+                    }
+                }
+
+                if(task.size() != 3) { // If task does not contain exactly 3 integers, print error and continue loop
+                    cout << "ERROR: Please enter exactly three integers separated by commas. Skipping..." << endl;
+                    continue;
                 }
 
                 // Add the task and print it
@@ -188,13 +210,15 @@ int main() {
                 cout << "Added task: UserID = " << task[0] << ", TaskID = " << task[1] << ", Priority = " << task[2] << endl;
             } else if(editOp.find(input) != editOp.end()) { // Edit operation selected
                 // Get the comma-seperated edit string (TaskID, Priority) from the user
-                cout << "Enter the comma-seperated edit string (TaskID, Priority) to edit: ";
-                cin >> input;
-                transform(input.begin(), input.end(), input.begin(), ::tolower);
+                cout << "Enter the comma-seperated edit string (TaskID, Priority) to edit or press enter to exit: ";
+                getline(cin, input);
+                toLowercase(input);
 
-                // if quit mode selected, break
-                if(quitMode.find(input) != quitMode.end()) {
-                    break;
+                if(isExitMode(input)) { // if exit mode selected, continue
+                    exitModeSelected();
+                    continue;
+                }else if(isQuitMode(input)) { // if quit mode selected, exit program
+                    return quitModeSelected();
                 }
 
                 // Tokenize input string into ints, push back to edit
@@ -202,7 +226,18 @@ int main() {
                 stringstream ss(input);
                 string token;
                 while(getline(ss, token, ',')) {
-                    edit.push_back(stoi(token));
+                    try { // Attempt to convert each token to an integer and add to edit vector
+                        edit.push_back(stoi(token));
+                    } catch(...) { // If conversion fails, print error and skip to next iteration of loop
+                        cout << "Invalid input: " << token << ". Please enter only integers. Skipping..." << endl;
+                        edit.clear();
+                        break;
+                    }
+                }
+
+                if(edit.size() != 2) { // If edit does not contain exactly 2 integers, print error and continue loop
+                    cout << "ERROR: Please enter exactly two integers separated by a comma. Skipping..." << endl;
+                    continue;
                 }
 
                 // Edit the task and print it
@@ -210,17 +245,25 @@ int main() {
                 cout << "Edited task: TaskID = " << edit[0] << ", Priority = " << edit[1] << endl;
             } else if(rmvOp.find(input) != rmvOp.end()) { // Remove operation selected
                 // Get the TaskID to remove from the user
-                cout << "Enter the TaskID to remove: ";
-                cin >> input;
-                transform(input.begin(), input.end(), input.begin(), ::tolower);
+                cout << "Enter the TaskID to remove or press enter to exit: ";
+                getline(cin, input);
+                toLowercase(input);
 
-                // if quit mode selected, break
-                if(quitMode.find(input) != quitMode.end()) {
-                    break;
+                if(isExitMode(input)) { // if exit mode selected, break
+                    exitModeSelected();
+                    continue;
+                } else if(isQuitMode(input)) { // if quit mode selected, exit program
+                    return quitModeSelected();
                 }
 
-                // Convert the entered taskID to an int
-                int taskId = stoi(input);
+                int taskId;
+                // Attempt to convert the entered taskID to an int
+                try {
+                    taskId = stoi(input);
+                } catch(...) { // If conversion fails, print error and skip to next iteration of loop
+                    cout << "Invalid input: " << input << ". Please enter only integers. Skipping..." << endl;
+                    continue;
+                }
 
                 // Remove the task and print
                 tm.rmv(taskId);
@@ -229,15 +272,18 @@ int main() {
                 cout << "Executing top task" << endl;
                 int userId = tm.execTop();
                 cout << "Executed top task for user " << userId << endl;
-            } else if(quitMode.find(input) != quitMode.end()) { // Quit operation selected
+            } else if(isQuitMode(input)) { // Quit operation selected
+                return quitModeSelected();
+            } else if(isExitMode(input)) { // Exit operation selected
+                exitModeSelected();
                 break;
             } else { // Else, unknown operation
                 cout << "Unknown operation: " << input << endl;
             }
 
         }
-    } else if(demoMode.find(mode) != demoMode.end()) { // Demo mode selected, run with demo data
-        cout << "Demo mode selected" << endl;
+    } else if(isDemoMode(mode)) { // Demo mode selected, run with demo data
+        demoModeSelected();
 
         // Create a 2D vector of demo data
         vector<vector<int>> demoData =  {
@@ -279,12 +325,12 @@ int main() {
             userId = tm.execTop();
             cout << "Executed top task for user " << userId << endl;
         }
-    } else if(quitMode.find(mode) != quitMode.end()) { // Quit mode selected, exit program
-        cout << "Quitting..." << endl;
-        return 0;
-    } else {
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // Quit mode selected, exit program
+        return quitModeSelected();
+    } else { // Else, unknown mode, error
+        return unknownModeSelected(mode);
     }
+
+    // Exit program
     return 0;
 }
