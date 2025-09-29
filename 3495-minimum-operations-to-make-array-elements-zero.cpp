@@ -4,7 +4,12 @@
 #include <algorithm>
 #include <set>
 #include <sstream>
+# include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use standard namespace
 using namespace std;
 
 class Solution {
@@ -39,43 +44,35 @@ public:
 };
 
 int main() {
-    cout << "Minimum Operations to Make Array Elements Zero Demo" << endl << endl;
+    printStartBanner("3495. Minimum Operations to Make Array Elements Zero", "O(n log r)", "O(1)");
     
-    // Get the mode to run program in from the user
-    string mode;
-    cout << "Select mode ([c]ustom, [d]emo, or [q]uit): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
-
-    // Create sets for matching the different modes
-    set<string> customMode = {"custom", "[c]ustom", "c", "[c]"};
-    set<string> demoMode = {"demo", "[d]emo", "d", "[d]"};
-    set<string> quitMode = {"quit", "[q]uit", "q", "[q]"};
-
     // Initialize solution
-    Solution s = Solution();
+    Solution s;
 
-    if(customMode.find(mode) != customMode.end()) { // Custom mode selected, run with user input
-        cout << "Custom mode selected" << endl;
+    // Get the mode to run program in from the user
+    string mode = selectMode();
 
-        // Create set to handle exit command
-        set<string> exitMode = {"exit", "[e]xit", "e", "[e]"};
+    if(isCustomMode(mode)) { // Custom mode selected, run with user input
+        customModeSelected();
 
         // Create a 2D vector to hold user-entered pairs
         vector<vector<int>> pairs;
+
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         // Initialize a holder for user input and loop
         string input;
         while(true) {
             // Get comma-seperated value pair from user
-            cout << "Enter comma-separated pair of values to use or [e]xit to stop entries: ";
-            cin >> input;
-            transform(input.begin(), input.end(), input.begin(), ::tolower);
+            cout << "Enter comma-separated pair of values to use or press enter to exit entries: ";
+            getline(cin, input);
+            toLowercase(input);
 
-            if(quitMode.find(input) != quitMode.end()) { // If quit entered, exit program
-                cout << "Quitting..." << endl;
-                return 0;
-            } else if(exitMode.find(input) != exitMode.end()) { // If exit entered, break loop
+            if(isQuitMode(mode)) { // If quit entered, exit program
+                return quitModeSelected();
+            } else if(input.empty() || isExitMode(input)) { // If blank or exit entered, break loop
+                exitModeSelected();
                 break;
             }
 
@@ -84,7 +81,17 @@ int main() {
             stringstream ss(input);
             string token;
             while(getline(ss, token, ',')) {
-                pair.push_back(stoi(token));
+                try { // Attempt to convert each token to an integer and add to pair vector
+                    pair.push_back(stoi(token));
+                } catch(...) { // If conversion fails, print error and skip token
+                    cout << "Invalid input: " << token << ". Please enter only integers. Skipping..." << endl;
+                    break;
+                }
+            }
+
+            if(pair.size() != 2) { // If pair does not contain exactly 2 integers, print error and continue loop
+                cout << "ERROR: Please enter exactly two integers separated by a comma. Skipping..." << endl;
+                continue;
             }
 
             // Push pair onto pairs 2D vector
@@ -99,8 +106,8 @@ int main() {
 
         // Calculate and print out results
         cout << "Minimum operations to make array elements zero: " << s.minOperations(pairs) << endl;
-    } else if(demoMode.find(mode) != demoMode.end()) { // Demo mode selected, run with demo data
-        cout << "Demo mode selected" << endl;
+    } else if(isDemoMode(mode)) { // Demo mode selected, run with demo data
+        demoModeSelected();
 
         // Initialize 3D vector of demo data
         vector<vector<vector<int>>> demoData =  {
@@ -143,12 +150,12 @@ int main() {
             }
             cout << "Minimum operations to make array elements zero: " << s.minOperations(data) << endl;
         }
-    } else if(quitMode.find(mode) != quitMode.end()) { // Quit mode selected, exit program
-        cout << "Quitting..." << endl;
-        return 0;
+    } else if(isQuitMode(mode)) { // Quit mode selected, exit program
+        return quitModeSelected();
     } else { // Else, invalid mode. Error
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+        return unknownModeSelected(mode);
     }
+
+    // Exit program
     return 0;
 }
