@@ -4,7 +4,12 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use standard namespace
 using namespace std;
 
 class Solution {
@@ -53,44 +58,45 @@ public:
 };
 
 int main() {
-    cout << "Find Most Frequent Vowel and Consonant Demo" << endl << endl;
+    printStartBanner("3541 Find Most Frequent Vowel and Consonant", "O(n)", "O(1)");
     
     // Initialize solution
-    Solution s = Solution();
+    Solution s;
 
     // Get the mode to run the program in (custom, demo, or quit) from the user
-    string mode;
-    cout << "Select mode ([c]ustom, [d]emo, or [q]uit): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    string mode = selectMode();
 
-    if(mode == "custom" || mode == "c" || mode == "[c]ustom") { // If mode is custom, run with user-provided data
-        cout << "Custom mode selected" << endl;
+    if(isCustomMode(mode)) { // If mode is custom, run with user-provided data
+        customModeSelected();
+
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         // Create holder variables for input and a lowercase version of inpiut
         string input;
         string lowerInput;
 
-        // Loop until user enters 'quit', 'q', or '[q]uit'
+        // Loop until user enters blank input, quit, or exit
         while(true) {
             // Get the word to calculate max frequency sum from user
             cout << "Select word to calculate max frequency sum: ";
-            cin >> input;
+            getline(cin, input);
 
             // Get lowercase version of input
-            lowerInput.resize(input.size());
-            transform(input.begin(), input.end(), lowerInput.begin(), ::tolower);
+            toLowercase(input, lowerInput);
 
-            // If lower input is 'quit', 'q', or '[q]uit', exit
-            if(lowerInput == "quit" || lowerInput == "q" || lowerInput == "[q]uit") {
+            if(input.empty() || isExitMode(input)) { // If no input entered or exit mode selected, break loop
+                exitModeSelected();
                 break;
+            } else if(isQuitMode(input)) { // If quit mode selected, exit program
+                return quitModeSelected();
             }
 
             // Calculate max frequency sum and print
             cout << "Max frequency sum of " << input << " is " << s.maxFreqSum(input) << endl;
         }
-    } else if(mode == "demo" || mode == "d" || mode == "[d]emo") { // If mode is demo, run with demo data
-        cout << "Demo mode selected" << endl;
+    } else if(isDemoMode(mode)) { // If mode is demo, run with demo data
+        demoModeSelected();
 
         // Initialize string vector of demo words to use
         vector<string> words = {"successes", "aeiaeia", "tnkdlyyhzhpfdhlatnnuxetutiuxf"};
@@ -100,12 +106,10 @@ int main() {
             cout << "Word: " << word << endl;
             cout << "Max frequency Sum: " << s.maxFreqSum(word) << endl;
         }
-    } else if(mode == "quit" || mode == "q" || mode == "[q]uit") { // If mode is quit, exit program
-        cout << "Quitting..." << endl;
-        return 0;
+    } else if(isQuitMode(mode)) { // If mode is quit, exit program
+        return quitModeSelected();
     } else { // Else, unknown mode, error
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+        return unknownModeSelected(mode);
     }
 
     // Exit program
