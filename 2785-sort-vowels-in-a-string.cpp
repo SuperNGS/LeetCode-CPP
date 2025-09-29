@@ -3,7 +3,12 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use standard namespace
 using namespace std;
 
 class Solution {
@@ -49,42 +54,42 @@ public:
 };
 
 int main() {
-    cout << "Sort Vowels in a String Demo" << endl << endl;
-
-    // Get the mode to run in from the user
-    string mode;
-    cout << "Select mode (custom or demo): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    printStartBanner("2785. Sort Vowels in a String", "O(n log n)", "O(n)");
 
     // Initialize the solution
-    Solution s = Solution();
+    Solution s;
 
-    if(mode == "custom" || mode == "c") { // If custom or c selected, run with user input
-        // Set variables to hold user input as well as the lowercase version
+    // Get the mode to run in from the user
+    string mode = selectMode();
+
+    if(isCustomMode(mode)) { // If custom or c selected, run with user input
+        customModeSelected();
+
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Set variables to hold user input as well as the lowercase version, loop
         string input;
         string lowerInput;
-
-        // Loop until user inputs "quit" or "q"
-        while(input != "quit" && input != "q") {
+        while(true) {
             // Get word to use from the user
-            cout << "Select word to sort vowels: ";
-            cin >> input;
+            cout << "Select word to sort vowels or press enter to exit: ";
+            getline(cin, input);
+            toLowercase(input, lowerInput);
 
-            // Get the lowercase version of input to check for quit command
-            lowerInput.resize(input.size());
-            transform(input.begin(), input.end(), lowerInput.begin(), ::tolower);
-
-
-            // If lowercase input is "quit" or "q", exit the loop
-            if(lowerInput == "quit" || lowerInput == "q") {
+            if(isExitMode(lowerInput)) { // If no input entered or exit mode selected, break loop
+                exitModeSelected();
                 break;
+            } else if(isQuitMode(lowerInput)) { // If quit mode selected, exit program
+                return quitModeSelected();
             }
 
             // Calculate the sorted vowels version of input
             cout << input << " with vowels sorted is " << s.sortVowels(input) << endl;
         }
-    } else if(mode == "demo" || mode == "d") { // If demo or d selected, run with demo data
+    } else if(isDemoMode(mode)) { // If demo mode selected, run with demo data
+        demoModeSelected();
+
         // Initialize demo data as a vector of strings
         vector<string> words = {"lEetcOde", "lYmpH", "hElLowOrLd"};
         
@@ -92,12 +97,10 @@ int main() {
         for(const auto& word : words) {
             cout << word << " with vowels sorted is " << s.sortVowels(word) << endl;
         }
-    } else if(mode == "quit" || mode == "q") { // If quit or q selected, exit the program
-        cout << "Quitting..." << endl;
-        return 0;
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If exit or quit selected, exit the program
+        return quitModeSelected();
     } else { // If none of the above selected, unknown mode. Error
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+        return unknownModeSelected(mode);
     }
 
     return 0;
