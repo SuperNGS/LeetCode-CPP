@@ -6,7 +6,12 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <limits>
 
+// Custom utilities header
+#include <utilities.h>
+
+// Use standard namespace
 using namespace std;
 
 class Spreadsheet {
@@ -65,63 +70,149 @@ public:
  * Main program to run the demo
  */
 int main(int argc, char* argv[]) {
-    cout << "Design Spreadsheet Demo" << endl << endl;
+    printStartBanner("3484 Design Spreadsheet", "O(1) for set/rest, O(m) for get", "O(n)");
 
-    cout << "Select mode (custom or demo): ";
-    string mode;
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    // Get the mode to run the program in from the user
+    string mode = selectMode();
 
-    if(mode == "custom" || mode == "c") {
-        cout << "Custom mode selected" << endl;
+    if(isCustomMode(mode)) { // If mode is custom, run with user-provided data
+        customModeSelected();
+
+        // Initialize input string
+        string input;
+
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         int rows;
-        cout << "Number of rows: ";
-        cin >> rows;
+        while(true) {
+            cout << "Enter number of rows or press enter to exit: ";
+            getline(cin, input);
+            toLowercase(input);
+
+            if(isExitMode(input) || isQuitMode(input)) { // If blank, quit, or exit entered, exit program
+                return quitModeSelected();
+            }
+
+            try {
+                rows = stoi(input);
+                break;
+            } catch(...) { // If conversion fails, print error and exit program
+                cout << "Invalid input: " << input << ". Please enter only integers. Skipping..." << endl;
+            }
+        }
+
         Spreadsheet ss = Spreadsheet(rows);
         cout << "Spreadsheet initialized with " << rows << " rows" << endl;
 
-        string input;
-        while(input != "quit" || input != "q") {
-            cout << "Enter a command (initialize, set, reset, get): ";
-            cin >> input;
+        while(true) {
+            cout << "Enter a command (initialize, set, reset, get) or press enter to exit: ";
+            getline(cin, input);
+            toLowercase(input);
+
             if(input == "initialize" || input == "i") {
                 int rows;
-                cout << "Number of rows: ";
-                cin >> rows;
+                cout << "Enter number of rows or press enter to exit: ";
+                getline(cin, input);
+                toLowercase(input);
+
+                if(isExitMode(input)) { // If blank or exit entered, exit operation
+                    exitModeSelected();
+                    continue;
+                } else if(isQuitMode(input)) { // If quit entered, exit program
+                    return quitModeSelected();
+                }
+
+                try {
+                    rows = stoi(input);
+                } catch(...) { // If conversion fails, print error and exit program
+                    cout << "Invalid input: " << input << ". Please enter only integers. Skipping..." << endl;
+                    continue;
+                }
                 ss = Spreadsheet(rows);
                 cout << "Spreadsheet initialized with " << rows << " rows" << endl;
             } else if( input == "set" || input == "s") {
                 string cell;
-                cout << "Cell to set: ";
-                cin >> cell;
-                transform(cell.begin(), cell.end(), cell.begin(), ::toupper);
+                cout << "Enter cell to set or press enter to exit: ";
+                getline(cin, cell);
+                toLowercase(cell);
+                if(isExitMode(cell)) { // If blank or exit entered, exit operation
+                    exitModeSelected();
+                    continue;
+                } else if(isQuitMode(cell)) { // If quit entered, exit program
+                    return quitModeSelected();
+                }
+                toUppercase(cell);
+
                 int value;
-                cout << "Value to use: ";
-                cin >> value;
+                cout << "Value to use or enter to exit: ";
+                getline(cin, input);
+                toLowercase(input);
+                if(isExitMode(input)) { // If blank or exit entered, exit operation
+                    exitModeSelected();
+                    continue;
+                } else if(isQuitMode(input)) { // If quit entered, exit program
+                    return quitModeSelected();
+                }
+
+                try {
+                    value = stoi(input);
+                } catch(...) { // If conversion fails, print error and exit operation
+                    cout << "Invalid input: " << input << ". Please enter only integers. Skipping..." << endl;
+                    continue;
+                }
+
                 ss.setCell(cell, value);
                 cout << "Cell " << cell << " set to value " << value << endl;
             } else if( input == "reset" || input == "r" ) {
                 string cell;
-                cout << "Cell to reset: ";
-                cin >> cell;
-                transform(cell.begin(), cell.end(), cell.begin(), ::toupper);
+                cout << "Cell to reset or enter to exit: ";
+                getline(cin, cell);
+                toLowercase(cell);
+                if(isExitMode(cell)) { // If blank or exit entered, exit operation
+                    exitModeSelected();
+                    continue;
+                } else if(isQuitMode(cell)) { // If quit entered, exit program
+                    return quitModeSelected();
+                }
+                toUppercase(cell);
+
                 ss.resetCell(cell);
                 cout << "Cell " << cell << " reset" << endl;
             } else if( input == "get" || input == "g" ) {
                 string val1;
                 string val2;
-                cout << "First value: ";
-                cin >> val1;
-                transform(val1.begin(), val1.end(), val1.begin(), ::toupper);
-                cout << "Second value: ";
-                cin >> val2;
-                transform(val2.begin(), val2.end(), val2.begin(), ::toupper);
+
+                cout << "Enter first value or press enter to exit: ";
+                getline(cin, val1);
+                toLowercase(val1);
+                if(isExitMode(val1)) { // If blank or exit
+                    exitModeSelected();
+                    continue;
+                } else if(isQuitMode(val1)) { // If quit entered, exit program
+                    return quitModeSelected();
+                }
+                toUppercase(val1);
+
+                cout << "Enter second value or press enter to exit: ";
+                getline(cin, val2);
+                toLowercase(val2);
+                if(isExitMode(val2)) { // If blank or exit
+                    exitModeSelected();
+                    continue;
+                } else if(isQuitMode(val2)) { // If quit entered, exit program
+                    return quitModeSelected();
+                }
+                toUppercase(val2);
+                
                 cout << "The value of =" << val1 << "+" << val2 << " is " << ss.getValue("=" + val1 + "+" + val2) << endl;
-            } else if(input == "quit" || input == "q") {
+            } else if(isExitMode(input)) {
+                exitModeSelected();
                 break;
+            } else if(isQuitMode(mode)) {
+                return quitModeSelected();
             } else {
-                cout << "Unknown command: " << input << endl;
+                cout << "Unknown operation: \'" << input << "\'. Skipping..." << endl;
             }
         }
         cout << "Demo ended" << endl;
