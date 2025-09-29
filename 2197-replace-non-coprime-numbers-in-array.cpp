@@ -4,6 +4,10 @@
 #include <algorithm>
 #include <set>
 #include <sstream>
+#include <limits>
+
+// Custom utilities header
+#include <utilities.h>
 
 using namespace std;
 
@@ -45,44 +49,54 @@ public:
 };
 
 int main() {
-    cout << "Replace Non-Coprime Numbers in Array Demo" << endl << endl;
+    printStartBanner("2197 Replace Non Coprime Numbers in Array", "O(n log(max(nums)))", "O(n)");
 
     // Get the mode (custom, demo, or quit) from user input
-    string mode;
-    cout << "Select mode ([c]ustom, [d]emo, or [q]uit): ";
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
-
-    // Create sets to match given modes
-    set<string> customMode = {"custom", "[c]ustom", "c", "[c]"};
-    set<string> demoMode = {"demo", "[d]emo", "d", "[d]"};
-    set<string> quitMode = {"quit", "[q]uit", "q", "[q]"};
+    string mode = selectMode();
 
     // Initialize solution
-    Solution s = Solution();
+    Solution s;
 
-    if(customMode.find(mode) != customMode.end()) { // Custom mode selected, run with user input
-        cout << "Custom mode selected" << endl;
+    if(isCustomMode(mode)) { // Custom mode selected, run with user input
+        customModeSelected();
 
-        // Get the vector of values to use as a comma-seperated string from the user
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Initialize input string
         string input;
-        cout << "Enter values as a comma-seperated string: ";
-        cin >> input;
-        transform(input.begin(), input.end(), input.begin(), ::tolower);
+        while(true) {
+            cout << "Enter values as a comma-seperated string or press enter to exit: ";
+            getline(cin, input);
+            toLowercase(input);
 
-        if(quitMode.find(input) != quitMode.end()) { // If user entered quit, exit program
-            cout << "Quitting..." << endl;
-        } else { // Else, create vector from input and run program
+            if(input.empty() || isExitMode(input)) { // If user entered exit, break loop
+                exitModeSelected();
+                break;
+            } else if(quitMode.find(input) != quitMode.end()) { // If user entered quit, exit program
+                cout << "Quitting..." << endl;
+            }
+
             // Create an int vector values and tokenize input into it
             vector<int> values;
             stringstream ss(input);
             string token;
 
-            // Print and tokenize input into values
-            cout << "Running with values: ";
+            
             while(getline(ss, token, ',')) {
-                cout << token << " ";
-                values.push_back(stoi(token));
+                try { // Attempt to convert each token to an integer and add to values vector
+                    values.push_back(stoi(token));
+                } catch(...) { // If conversion fails, print error and skip token
+                    cout << "Invalid input: " << token << ". Please enter only integers. Skipping..." << endl;
+                    continue;
+                }
+            }
+            cout << endl;
+
+            // Print input values
+            cout << "Running with values: ";
+            for(const auto& value : values) {
+                cout << value << " ";
             }
             cout << endl;
 
@@ -96,9 +110,8 @@ int main() {
             }
             cout << endl;
         }
-
-    } else if(demoMode.find(mode) != demoMode.end()) { // Demo mode selected, run with demo data
-        cout << "Demo mode selected" << endl;
+    } else if(isDemoMode(mode)) { // Demo mode selected, run with demo data
+        demoModeSelected();
 
         // Initialize 2D vector demoData
         vector<vector<int>> demoData =  {
@@ -125,11 +138,12 @@ int main() {
             }
             cout << endl;
         }
-    } else if(quitMode.find(mode) != quitMode.end()) { // Quit mode selected, exit program
-        cout << "Quitting..." << endl;
+    } else if(isQuitMode(mode)) { // Quit mode selected, exit program
+        return quitModeSelected();
     } else { // Else, unknown mode. Error
-        cout << "Unknown mode: " << mode << endl;
-        return -1;
+        return unknownModeSelected(mode);
     }
+
+    // Exit program
     return 0;
 }
