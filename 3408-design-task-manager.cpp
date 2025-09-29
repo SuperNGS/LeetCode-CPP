@@ -105,13 +105,14 @@ TaskManager initTaskManager() {
     string input;
     while(true) {
         // Get the comma-seperated task string from the user
-        cout << "Input task as a comma-seperated string (UserID, TaskID, Priority) or [e]xit to stop entries: ";
+        cout << "Input task as a comma-seperated string (UserID, TaskID, Priority) or press enter to stop entries: ";
         getline(cin, input);
         toLowercase(input);
 
         if(isQuitMode(input)) { // If quit entered, exit program
             exit(0);
         } else if(isExitMode(input)) { // If exit entered, break out of loop
+            exitModeSelected();
             break;
         }
 
@@ -150,6 +151,9 @@ int main() {
     if(isCustomMode(mode)) { // Custom mode selected, run with user input
         customModeSelected();
 
+        // Clear input buffer
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
         // Initialize the TaskManager
         TaskManager tm = initTaskManager();
 
@@ -160,8 +164,7 @@ int main() {
         set<string> rmvOp = {"remove", "[r]emove", "rmv", "[r]mv", "r", "[r]"};
         set<string> execOp = {"execute", "[ex]ecute", "exec", "[ex]ec", "ex", "[ex]"};
 
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
 
         // Create a holder for user input and loop
         string input;
