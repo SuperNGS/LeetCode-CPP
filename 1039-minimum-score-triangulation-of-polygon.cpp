@@ -80,6 +80,7 @@ int main() {
             // Get n value from user input
             cout << "Enter comma-seperated list of values or press enter to exit: ";
             getline(cin, input);
+            toLowercase(input);
 
             if(input.empty() || isExitMode(input)) { // If no input entered or exit mode selected, break loop
                 exitModeSelected();
