@@ -121,7 +121,7 @@ FoodRatings initFoodRatings() {
     // Print the ratings used for initialization
     cout << "Initializing with ratings: ";
     for(const auto& rating : ratings) {
-        cout << rating << " " << endl;
+        cout << rating << " ";
     }
     cout << endl;
 
