@@ -1,4 +1,9 @@
 #include <bits/stdc++.h>
+
+// Custom utilities header
+#include <utilities.h>
+
+// Use std namespace
 using namespace std;
 
 class FoodRatings {
@@ -42,10 +47,19 @@ public:
  * Helper function to custom init FoodRatings
  */
 FoodRatings initFoodRatings() {
+    // Initialize blank input string
+    string input;
+
     // Provided a comma-separated string by the user, create a vector<string> of foods    
     cout << "Enter foods as a comma-separated string: ";
     string foodString;
-    cin >> foodString;
+    getline(cin, foodString);
+    toLowercase(foodString, input);
+
+    if(isExitMode(input) || isQuitMode(input)) { // If blank, exit, or quit entered, exit program
+        exit(quitModeSelected());
+    }
+
     vector<string> foods;
     stringstream ssf(foodString);
     string foodToken;
@@ -60,7 +74,13 @@ FoodRatings initFoodRatings() {
     // Provided a comma-separated string by the user, create a vector<string> of cuisines
     cout << "Enter cuisines as a comma-separated string: ";
     string cuisineString;
-    cin >> cuisineString;
+    getline(cin, cuisineString);
+    toLowercase(cuisineString, input);
+
+    if(isExitMode(input) || isQuitMode(input)) { // If blank, exit, or quit entered, exit program
+        exit(quitModeSelected());
+    }
+
     vector<string> cuisines;
     stringstream ssc(cuisineString);
     string cuisineToken;
@@ -75,14 +95,33 @@ FoodRatings initFoodRatings() {
     // Provided a comma-separated string by the user, create a vecctor<int> of ratings
     cout << "Enter ratings as a comma-separated string: ";
     string ratingString;
-    cin >> ratingString;
+    getline(cin, ratingString);
+    toLowercase(ratingString, input);
+
+    if(isExitMode(input) || isQuitMode(input)) { // If blank, exit, or quit entered, exit program
+        exit(quitModeSelected());
+    }
+    
     vector<int> ratings;
     stringstream ssr(ratingString);
     string ratingToken;
-    cout << "Initializing with ratings: ";
     while(getline(ssr, ratingToken, ',')) {
-        cout << ratingToken << " ";
-        ratings.push_back(stoi(ratingToken));
+        try {
+            ratings.push_back(stoi(ratingToken));
+        } catch(...) {
+            cout << "ERROR: invalid input '" << ratingToken << "'. Please only enter integers. Skipping..." << endl;
+        }
+    }
+
+    if(ratings.size() != cuisines.size()) {
+        cout << "ERROR: Number of ratings must match number of entries. Try again" << endl;
+        return initFoodRatings();
+    }
+
+    // Print the ratings used for initialization
+    cout << "Initializing with ratings: ";
+    for(const auto& rating : ratings) {
+        cout << rating << " " << endl;
     }
     cout << endl;
 
@@ -91,61 +130,98 @@ FoodRatings initFoodRatings() {
 }
 
 int main() {
-    cout << "Design a Food Rating System Demo" << endl << endl;
-    
-    // Get mode to run in (custom or demo) from the user
-    cout << "Select mode (custom or demo): ";
-    string mode;
-    cin >> mode;
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    printStartBanner("2353. Design a Food Rating System", "O(n log n) for initialization, O(log m) for rating change, O(1) for query highest", "O(1)");
 
-    if(mode == "custom" || mode == "c") { // Custom mode selected, run with user-provided data
+    // Get mode to run in from the user
+    string mode = selectMode();
+
+    if(isCustomMode(mode)) { // Custom mode selected, run with user-provided data
         cout << "Custom mode selected" << endl;
 
         // Create the initialized FoodRatings object
         FoodRatings fr = initFoodRatings();
 
-        string input;
-        while(input != "quit" && input != "q") {
-            cout << "Select operation (init, change, highest): ";
-            cin >> input;
-            transform(input.begin(), input.end(), input.begin(), ::tolower);
+        cout << "Food Rating System initialized" << endl;
 
-            // If user selecteds 'quit' or 'q', exit the loop
-            if(input == "quit" || input == "q") {
+        set<string> initOp = {"init", "[i]nit", "i", "[i]"};
+        set<string> changeOp = {"change", "[c]hange", "c", "[c]"};
+        set<string> highOp = {"highest", "[h]ighest", "h", "[h]"};
+
+        // Initialize input and begin loop
+        string input;
+        while(true) {
+            cout << "Select operation ([i]nit, [c]hange, [h]ighest) or press enter to exit: ";
+            getline(cin, input);
+            toLowercase(input);
+
+            if(isExitMode(input)) { // If blank string or exit entered, break loop
+                exitModeSelected();
                 break;
+            } else if(isQuitMode(input)) { // If quit selected, exit program
+                return quitModeSelected();
             }
 
-            if(input == "init" || input == "i") { // If user selected 'init' or 'i', reinitialize FoodRatings
+            if(initOp.find(input) != initOp.end()) { // If user selected 'init' or 'i', reinitialize FoodRatings
                 cout << "Init operation selected" << endl;
                 fr = initFoodRatings();
-            } else if(input == "change" || input == "c") { // If user selected 'change' or 'c', run changeRating with user input
+            } else if(changeOp.find(input) != changeOp.end()) { // If user selected 'change' or 'c', run changeRating with user input
                 cout << "Change operation selected" << endl;
                 string food;
                 int rating;
+
                 cout << "Select food: ";
-                cin >> food;
-                transform(food.begin(), food.end(), food.begin(), ::tolower);
+                getline(cin, food);
+                toLowercase(food, input);
+
+                if(isExitMode(input)) { // If blank string or exit entered, break loop
+                    exitModeSelected();
+                    break;
+                } else if(isQuitMode(input)) { // If quit selected, exit program
+                    return quitModeSelected();
+                }
                 cout << "Select rating: ";
-                cin >> rating;
+                getline(cin, input);
+                toLowercase(input);
+
+                if(isExitMode(input)) { // If blank string or exit entered, break loop
+                    exitModeSelected();
+                    break;
+                } else if(isQuitMode(input)) { // If quit selected, exit program
+                    return quitModeSelected();
+                }
+
+                try {
+                    rating = stoi(input);
+                } catch(...) {
+                    cout << "ERROR: Invalid input '"<< input << "'. Rating must be an int. Skipping..." << endl;
+                    continue;
+                }
+
+                // Change the rating and print
                 fr.changeRating(food, rating);
                 cout << "Changed rating for food " << food << " to " << rating << endl;
-            } else if(input == "highest" || input == "h") { // If user selected 'highest' or 'h', run highestRated with user input
+            } else if(highOp.find(input) != highOp.end()) { // If user selected 'highest' or 'h', run highestRated with user input
                 cout << "Highest operation selected" << endl;
+                
                 string cuisine;
                 cout << "Select cuisine: ";
-                cin >> cuisine;
-                transform(cuisine.begin(), cuisine.end(), cuisine.begin(), ::tolower);
+                getline(cin, cuisine);
+                toLowercase(cuisine, input);
+
+                if(isExitMode(input)) { // If blank string or exit entered, break loop
+                    exitModeSelected();
+                    break;
+                } else if(isQuitMode(input)) { // If quit selected, exit program
+                    return quitModeSelected();
+                }
+
                 cout << "The highest rated food for cuisine " << cuisine << " is " << fr.highestRated(cuisine) << endl;
             } else { // If none of the above selected, invalid operation specified
-                cout << "Unknown operation: " << input << endl;
+                cout << "Unknown operation: '" << input << "'. Skipping..." << endl;
             }
         }
         
-
-
-
-    } else if(mode == "demo" || mode == "d") { // Demo mode selected, run with demo data
+    } else if(isDemoMode(mode)) { // Demo mode selected, run with demo data
         // Create vectors for food, cuisines, and ratings
         vector<string> foods = {"kimchi", "miso", "sushi", "moussaka", "ramen", "bulgogi"};
         vector<string> cuisines = {"korean", "japanese", "japanese", "greek", "japanese", "korean"};
@@ -177,9 +253,12 @@ int main() {
         cout << "Highest rated Korean cuisine: " << fr.highestRated("korean") << endl;
         cout << "Highest rated Greek cuisine: " << fr.highestRated("greek") << endl;
 
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // Exit or quit selected, exit program
+        return quitModeSelected();
     } else { // Unknown mode selected, return error
-        cout << "Unknown mode: " << mode << endl;
-        return -1;
+        return unknownModeSelected(mode);
     }
+
+    // Exit program successfully
     return 0;
 }
