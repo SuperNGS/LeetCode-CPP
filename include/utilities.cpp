@@ -17,13 +17,15 @@ void printStartBanner(const string title, const string timeComplexity, const str
 }
 
 string selectMode() {
+
     // Prompt the user to enter mode and capture input
     string mode;
     cout << "Select mode ([c]ustom, [d]emo, or [q]uit): ";
-    cin >> mode;
+
+    getline(cin, mode);
 
     // Convert the mode to lowercase
-    transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
+    toLowercase(mode);
 
     // Return the mode parsed from user input
     return mode;
@@ -46,7 +48,7 @@ void demoModeSelected() {
 }
 
 bool isExitMode(const string mode) {
-    return exitMode.find(mode) != exitMode.end();
+    return mode.empty() || exitMode.find(mode) != exitMode.end();
 }
 
 void exitModeSelected() {
