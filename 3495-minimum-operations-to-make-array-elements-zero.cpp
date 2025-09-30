@@ -58,9 +58,6 @@ int main() {
         // Create a 2D vector to hold user-entered pairs
         vector<vector<int>> pairs;
 
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         // Initialize a holder for user input and loop
         string input;
         while(true) {
@@ -150,7 +147,7 @@ int main() {
             }
             cout << "Minimum operations to make array elements zero: " << s.minOperations(data) << endl;
         }
-    } else if(isQuitMode(mode)) { // Quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // Quit mode selected, exit program
         return quitModeSelected();
     } else { // Else, invalid mode. Error
         return unknownModeSelected(mode);

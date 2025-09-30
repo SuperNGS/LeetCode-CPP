@@ -5,7 +5,6 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
-#include <limits>
 
 // Include custom utilities
 #include <utilities.h>
@@ -167,9 +166,6 @@ int main() {
 
     if(isCustomMode(mode)) { // Custom mode selected, run with user input
         customModeSelected();
-
-        // Clear input buffer before taking user input
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');    
 
         // Initialize the movie renting system from user input
         MovieRentingSystem mrs = initMovieRentingSystem();
@@ -369,7 +365,7 @@ int main() {
         for(const auto& rep : report) {
             cout << "\tShop = " << rep[0] << ", Movie = " << rep[1] << endl;
         }
-    } else if(isQuitMode(mode)) { // If quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If quit or exit mode selected, exit program
         return quitModeSelected();
     } else { // Else, unknown mode. Error
         return unknownModeSelected(mode);

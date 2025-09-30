@@ -6,7 +6,6 @@
 #include <sstream>
 #include <unordered_set>
 #include <unordered_map>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -98,9 +97,6 @@ int main() {
         // Set holders for input and a lowercase version of input
         string input;
         string lowerInput;
-
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         // Loop until user enters 'quit', 'q', or '[q]uit'
         while(true) {
@@ -220,7 +216,7 @@ int main() {
             cout << endl;
         }
 
-    } else if(isQuitMode(mode)) { // If quit mode, exit the program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If quit or exit mode, exit the program
         return quitModeSelected();
     } else { // Else mode is unknown, error
         return unknownModeSelected(mode);

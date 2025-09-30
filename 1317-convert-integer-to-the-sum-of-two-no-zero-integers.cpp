@@ -3,7 +3,6 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
-#include <limits>
 
 // Custom utilities
 #include <utilities.h>
@@ -59,9 +58,6 @@ int main() {
 
     if(isCustomMode(mode)) { // If running in custom mode, run with user input
         customModeSelected();
-
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         
         // Create holdeers for user input and valid n entries, loop until exit or quit
         string input;
@@ -114,7 +110,7 @@ int main() {
                 cout << "Value " << n << " can't be decomposed into two no-zero integers" << endl;
             }
         }
-    } else if(isQuitMode(mode)) { // If quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If quit or exit mode selected, exit program
         return quitModeSelected();
     } else { // Else, unknown mode. Error
         return unknownModeSelected(mode);

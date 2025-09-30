@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <vector>
 #include <tuple>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -43,9 +42,6 @@ int main() {
     if(isCustomMode(mode)) { // If custom mode selected, run with user input
         customModeSelected();
 
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         // Initialize input string and start loop
         string input;
         while(true) {
@@ -57,7 +53,7 @@ int main() {
 
             if(isQuitMode(input)) { // If quit mode selected, exit program
                 return quitModeSelected();
-            } else if(input.empty() || isExitMode(input)) { // If no input entered or exit mode selected, break loop
+            } else if(isExitMode(input)) { // If no input entered or exit mode selected, break loop
                 exitModeSelected();
                 break;
             }
@@ -77,7 +73,7 @@ int main() {
             
             if(isQuitMode(input)) { // If quit mode selected, exit program
                 return quitModeSelected();
-            } else if(input.empty() || isExitMode(input)) { // If no input entered or exit mode selected, break loop
+            } else if(isExitMode(input)) { // If no input entered or exit mode selected, break loop
                 exitModeSelected();
                 break;
             }
@@ -97,7 +93,7 @@ int main() {
 
             if(isQuitMode(input)) { // If quit mode selected, exit program
                 return quitModeSelected();
-            } else if(input.empty() || isExitMode(input)) { // If no input entered or exit mode selected, break loop
+            } else if(isExitMode(input)) { // If no input entered or exit mode selected, break loop
                 exitModeSelected();
                 break;
             }
@@ -141,7 +137,7 @@ int main() {
                 cout << "x and y are equally close to z" << endl;
             }
         }
-    } else if(isQuitMode(mode)) { // If quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If exit or quit mode selected, exit program
         return quitModeSelected();
     } else { // If mode matchest none of the above, print and return error
         cout << "Invalid mode: " << mode;

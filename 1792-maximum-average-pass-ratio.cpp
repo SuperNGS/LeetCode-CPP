@@ -2,7 +2,6 @@
 #include <vector>
 #include <queue>
 #include <iomanip>
-#include <limits>
 
 // Include custom utilities
 #include <utilities.h>
@@ -84,9 +83,6 @@ int main() {
         vector<vector<int>> classes;
         int extraStudents;
 
-        // Clear input buffer before taking user input
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         // Create a holder for user input and loop until exit called
         string input;
         while(true) {
@@ -148,7 +144,7 @@ int main() {
             // Print the result of calculating Max Average Pass Ratio
             cout << "\tMax average pass ratio is: " << s.maxAverageRatio(demoClasses[i], demoExtraStudents[i]) << endl;
         }
-    } else if(isQuitMode(mode)) { // Quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // Quit or exit mode selected, exit program
         return quitModeSelected();
     } else { // Else, unknown mode. Error
         return unknownModeSelected(mode);

@@ -4,7 +4,6 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h> 
@@ -79,9 +78,6 @@ int main() {
         // Create holders for numerator and denominator input from user
         string numerator;
         string denominator;
-
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         
         // Loop until user enters quit or exit commands
         while(numerator != "quit" && numerator != "q" && denominator != "quit" && denominator != "q") {
@@ -91,7 +87,7 @@ int main() {
 
             if(isQuitMode(numerator)) { // User enterd quit, exit program
                 return quitModeSelected();
-            } else if(numerator.empty() || isExitMode(numerator)) { // User entered exit or blank string, exit loop
+            } else if(isExitMode(numerator)) { // User entered exit or blank string, exit loop
                 exitModeSelected();
                 break;
             }
@@ -102,7 +98,7 @@ int main() {
 
             if(isQuitMode(denominator)) { // User enterd quit, exit program
                 return quitModeSelected();
-            } else if(denominator.empty() || isExitMode(denominator)) { // User entered exit or blank string, exit loop
+            } else if(isExitMode(denominator)) { // User entered exit or blank string, exit loop
                 exitModeSelected();
                 break;
             }
@@ -120,7 +116,7 @@ int main() {
         for(const auto& division : demoData) {
             cout << division.first << " / " << division.second << " = " << s.fractionToDecimal(division.first, division.second) << endl;
         }
-    } else if(isQuitMode(mode)) { // Quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // Quit or exit mode selected, exit program
         return quitModeSelected();
     } else { // Else, unknown mode. Error
         return unknownModeSelected(mode);

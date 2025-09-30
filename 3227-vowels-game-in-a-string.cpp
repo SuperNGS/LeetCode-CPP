@@ -3,7 +3,6 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -73,9 +72,6 @@ int main() {
     if(isCustomMode(mode)) { // If mode is custom, run with user-provided data
         customModeSelected();
 
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         // Initialize input string + lowercase copy and start loop
         string input;
         string lowerInput;
@@ -104,7 +100,7 @@ int main() {
         for(const auto& word : words) {
             cout << "Winner of vowel game with word = " << word << ": " << (s.doesAliceWin(word) ? "Alice" : "Bob") << endl;
         }
-    } else if(isQuitMode(mode)) { // If mode is quit, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If mode is exit or quit, exit program
         return quitModeSelected();
     } else { // Else, unknown mode, error
         return unknownModeSelected(mode);

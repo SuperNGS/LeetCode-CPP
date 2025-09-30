@@ -3,7 +3,6 @@
 #include <iostream>
 #include <set>
 #include <sstream>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -57,9 +56,6 @@ int main() {
 
         // Initialize holder for user input and start looping
         string input;
-
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         
         while(true) {
             // Get the comma-separated string of values from user
@@ -115,7 +111,7 @@ int main() {
             // Calculate and print the valid triangle number
             cout << "The total number of valid triangles in the set is " << s.triangleNumber(data) << endl;
         }
-    } else if(isQuitMode(mode)) { // If quit mode, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If quit or exit mode, exit program
         return quitModeSelected();
     } else { // Else, invalid mode. Error
         return unknownModeSelected(mode);

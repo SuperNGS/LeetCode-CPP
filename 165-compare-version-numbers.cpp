@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <sstream>
 #include <iostream>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -68,9 +67,6 @@ int main() {
         string version1;
         string version2;
 
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         // Loop until user quits or exits
         while(true) {
             // Get the first version or quit/exit commands
@@ -79,7 +75,7 @@ int main() {
 
             if(isQuitMode(version1)) { // If user entered quit, exit program
                 return quitModeSelected();
-            } else if(version1.empty() || isExitMode(version1)) { // If user entered blank string or exit, exit loop
+            } else if(isExitMode(version1)) { // If user entered blank string or exit, exit loop
                 exitModeSelected();
                 break;
             }
@@ -91,7 +87,7 @@ int main() {
 
             if(isQuitMode(version2)) { // If user entered quit, exit program
                 quitModeSelected();
-            } else if(isExitMode(version2) || version2.empty()) { // If user entered blank string or exit, exit loop
+            } else if(isExitMode(version2)) { // If user entered blank string or exit, exit loop
                 exitModeSelected();
                 break;
             }
@@ -135,7 +131,7 @@ int main() {
                 cout << "Version " << versions.second << " has fewer revisions" << endl;
             }
         }
-    } else if(isQuitMode(mode)) { // Quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // Quit or exit mode selected, exit program
         quitModeSelected();
     } else { // Else, unknown mode selected, error
         unknownModeSelected(mode);

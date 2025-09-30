@@ -3,7 +3,6 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -64,9 +63,6 @@ int main() {
 
     if(isCustomMode(mode)) { // If custom or c selected, run with user input
         customModeSelected();
-
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         // Set variables to hold user input as well as the lowercase version, loop
         string input;

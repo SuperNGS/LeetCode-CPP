@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <set>
 #include <sstream>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -59,9 +58,6 @@ int main() {
 
     if(isCustomMode(mode)) { // Custom mode selected, run with user input
         customModeSelected();
-
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         // Initialize input string
         string input;
@@ -137,7 +133,7 @@ int main() {
             }
             cout << endl;
         }
-    } else if(isQuitMode(mode)) { // Quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // Quit or exit mode selected, exit program
         return quitModeSelected();
     } else { // Else, unknown mode. Error
         return unknownModeSelected(mode);

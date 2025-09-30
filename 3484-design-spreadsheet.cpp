@@ -81,9 +81,6 @@ int main(int argc, char* argv[]) {
         // Initialize input string
         string input;
 
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         int rows;
         while(true) {
             cout << "Enter number of rows or press enter to exit: ";
@@ -216,8 +213,8 @@ int main(int argc, char* argv[]) {
             }
         }
         cout << "Demo ended" << endl;
-    } else if(mode == "demo" || mode == "d") {
-        cout << "Demo mode selected" << endl;
+    } else if(isDemoMode(mode)) { // If demo mode, run with demo data
+        demoModeSelected();
 
         int rows = 5;
         Spreadsheet ss = Spreadsheet(rows);
@@ -232,9 +229,10 @@ int main(int argc, char* argv[]) {
         cout << "A1 + A2 = " << ss.getValue("=A1+A2") << endl;
         cout << "5 + 10 = " << ss.getValue("=5+10") << endl;
         cout << "A1 + 10 = " << ss.getValue("=A1+10") << endl;
-    } else {
-        cout << "Invalid mode: " << mode << endl;
-        return -1;
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If exit or quit selected, exit program
+        return quitModeSelected();
+    } else { // Else, unknown mode selected, error
+        return unknownModeSelected(mode);
     }
     return 0;
 }

@@ -1,6 +1,5 @@
 # include <vector>
 # include <algorithm>
-# include <limits>
 # include <sstream>
 
 // Custom header utilities
@@ -53,9 +52,6 @@ int main() {
     if(customMode.find(mode) != customMode.end()) { // Custom mode selected, run with user input
         customModeSelected();
 
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         // Create a holder for user input, a 2D vector for entered pairs, and loop
         string input;
         vector<vector<int>> pairs;
@@ -65,10 +61,10 @@ int main() {
             getline(cin, input);
             toLowercase(input);
             
-            if(input.empty() || exitMode.find(input) != exitMode.end()) { // Exit loop if blank line or exit entered
+            if(isExitMode(mode)) { // Exit loop if blank line or exit entered
                 break;
-            } else if(quitMode.find(input) != quitMode.end()) { // Quit program if quit entered
-                quitModeSelected();
+            } else if(isQuitMode(mode)) { // Quit program if quit entered
+                return quitModeSelected();
             }
 
             // Parse the inputted string for inputted pair
@@ -138,7 +134,7 @@ int main() {
             // Calculate and print largest triangle area
             cout << "Largest triangle area: " << s.largestTriangleArea(points) << endl;;
         }
-    } else if(quitMode.find(mode) != quitMode.end()) { // Quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // Quit or exit mode selected, exit program
         return quitModeSelected();
     } else { // Else, unknown mode selected. Error
         return unknownModeSelected(mode);

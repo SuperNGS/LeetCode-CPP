@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -42,9 +41,6 @@ int main() {
 
     if(isCustomMode(mode)) { // Custom mode selected, run with user input
         customModeSelected();
-
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         // Initialize input string and begin looping
         string input;

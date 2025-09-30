@@ -4,7 +4,6 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -69,9 +68,6 @@ int main() {
     if(isCustomMode(mode)) { // If mode is custom, run with user-provided data
         customModeSelected();
 
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         // Create holder variables for input and a lowercase version of inpiut
         string input;
         string lowerInput;
@@ -85,7 +81,7 @@ int main() {
             // Get lowercase version of input
             toLowercase(input, lowerInput);
 
-            if(input.empty() || isExitMode(input)) { // If no input entered or exit mode selected, break loop
+            if(isExitMode(input)) { // If no input entered or exit mode selected, break loop
                 exitModeSelected();
                 break;
             } else if(isQuitMode(input)) { // If quit mode selected, exit program
@@ -106,7 +102,7 @@ int main() {
             cout << "Word: " << word << endl;
             cout << "Max frequency Sum: " << s.maxFreqSum(word) << endl;
         }
-    } else if(isQuitMode(mode)) { // If mode is quit, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If mode is exit or quit, exit program
         return quitModeSelected();
     } else { // Else, unknown mode, error
         return unknownModeSelected(mode);

@@ -3,7 +3,6 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -42,9 +41,6 @@ int main() {
         // Create a holder variable for user input and loop until user quits or exits
         string input;
 
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         // While user has not entered quit or exit, loop
         while(true) {
             // Create a 2D vector to hold the triangle
@@ -60,7 +56,7 @@ int main() {
                 getline(cin, input);
                 toLowercase(input);
 
-                if(isExitMode(input) || input.empty()) { // If input was exit, break
+                if(isExitMode(input)) { // If input was exit, break
                     break;
                 } else if(isQuitMode(input)) { // If input was quit exit program
                     return quitModeSelected();
@@ -131,7 +127,7 @@ int main() {
             cout << "The shortest path is " << s.minimumTotal(triangle) << endl << endl;
         }
 
-    } else if(isQuitMode(mode)) { // If quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If quit or exit mode selected, exit program
         return quitModeSelected();
     } else { // Else invalid mode, error
         return unknownModeSelected(mode);

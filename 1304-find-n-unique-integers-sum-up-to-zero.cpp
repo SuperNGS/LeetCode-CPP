@@ -1,7 +1,6 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
-#include <limits>
 
 // Custom utilities header
 #include <utilities.h>
@@ -49,9 +48,6 @@ int main() {
 
         // Create holder for input
         string input;
-
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         
         // Loop until user breaks loop
         while(true) {
@@ -94,7 +90,7 @@ int main() {
             }
             cout << endl;
         }
-    } else if(isQuitMode(mode)) { // If quit mode selected, exit program
+    } else if(isExitMode(mode) || isQuitMode(mode)) { // If quit or exit mode selected, exit program
         return quitModeSelected();
     } else { // Else unknown mode selected, error
         return unknownModeSelected(mode);
