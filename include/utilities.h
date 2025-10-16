@@ -6,6 +6,8 @@
 #include <string>
 #include <set>
 #include <algorithm>
+#include <vector>
+#include <sstream>
 
 /* GLOBALS */
 // Mode-matching set for custom mode
@@ -50,5 +52,8 @@ void toLowercase(std::string& input, std::string& copy);
 void toUppercase(std::string& input);
 // Convert input to uppercase and store in copy
 void toUppercase(std::string& input, std::string& copy);
+// Convert comma-seperated string to int vector
+std::vector<int> stringToIntVector(std::string& input);
+
 
 #endif

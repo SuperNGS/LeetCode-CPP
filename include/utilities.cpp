@@ -92,3 +92,24 @@ void toUppercase(string& input, string& copy) {
     // Convert the input string to uppercase and store it in copy
     transform(input.begin(), input.end(), copy.begin(), ::toupper);
 }
+
+vector<int> stringToIntVector(string& input) {
+    // Initialize int vector
+    vector<int> result;
+    // Initialize stringstream on input and string token
+    stringstream ss(input);
+    string token;
+
+    // Loop over string, tokenize by commas
+    while(getline(ss, token, ',')) {
+        try { // Attempt to convert token to an int and push back onto result
+            result.push_back(stoi(token));
+        } catch(...) { // Catch unconvertable type, error and skip
+            cout << "ERROR: Invalid input '" << token << "'. Please only enter integers. Skipping..." << endl;
+            continue;
+        }
+    }
+
+    // Return the result
+    return result;
+}
