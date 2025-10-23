@@ -113,3 +113,9 @@ vector<int> stringToIntVector(string& input) {
     // Return the result
     return result;
 }
+
+bool isNumericString(std::string &input)
+{
+    // Return true if all characters in input are digits, false otherwise
+    return all_of(input.begin(), input.end(), ::isdigit);
+}

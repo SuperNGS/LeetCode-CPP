@@ -54,6 +54,7 @@ void toUppercase(std::string& input);
 void toUppercase(std::string& input, std::string& copy);
 // Convert comma-seperated string to int vector
 std::vector<int> stringToIntVector(std::string& input);
-
+// Return true if string is numeric, false otherwise
+bool isNumericString(std::string& input);
 
 #endif
