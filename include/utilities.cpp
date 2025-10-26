@@ -2,13 +2,13 @@
 
 using namespace std;
 
-void printStartBanner(const string title) {
+void printStartBanner(const string& title) {
     cout << title << " Demo" << endl;
     cout << string(title.length() + 5, '=') << endl;
     cout << endl;
 }
 
-void printStartBanner(const string title, const string timeComplexity, const string spaceComplexity) {
+void printStartBanner(const string& title, const string& timeComplexity, const string& spaceComplexity) {
     cout << title << " Demo" << endl;
     cout << string(title.length() + 5, '=') << endl;
     cout << "Time Complexity: " << timeComplexity << endl;
@@ -31,7 +31,7 @@ string selectMode() {
     return mode;
 }
 
-bool isCustomMode(const string mode) {
+bool isCustomMode(const string& mode) {
     return customMode.find(mode) != customMode.end();
 }
 
@@ -39,7 +39,7 @@ void customModeSelected() {
     cout << "Custom mode selected" << endl;
 }
 
-bool isDemoMode(const string mode) {
+bool isDemoMode(const string& mode) {
     return demoMode.find(mode) != demoMode.end();
 }
 
@@ -47,7 +47,7 @@ void demoModeSelected() {
     cout << "Demo mode selected" << endl;
 }
 
-bool isExitMode(const string mode) {
+bool isExitMode(const string& mode) {
     return mode.empty() || exitMode.find(mode) != exitMode.end();
 }
 
@@ -55,7 +55,7 @@ void exitModeSelected() {
     cout << "Exiting..." << endl;
 }
 
-bool isQuitMode(const string mode) {
+bool isQuitMode(const string& mode) {
     return quitMode.find(mode) != quitMode.end();
 }
 
@@ -64,7 +64,7 @@ int quitModeSelected() {
     return 0;
 }
 
-int unknownModeSelected(const string mode) {
+int unknownModeSelected(const string& mode) {
     cout << "Unknown mode selected: " << mode << endl;
     return -1;
 }
@@ -74,7 +74,7 @@ void toLowercase(string& input) {
     transform(input.begin(), input.end(), input.begin(), ::tolower);
 }
 
-void toLowercase(string& input, string& copy) {
+void toLowercase(const string& input, string& copy) {
     // Resize the copy to match input
     copy.resize(input.size());
     // Convert the input string to lowercase and store it in copy
@@ -86,14 +86,14 @@ void toUppercase(string& input) {
     transform(input.begin(), input.end(), input.begin(), ::toupper);
 }
 
-void toUppercase(string& input, string& copy) {
+void toUppercase(const string& input, string& copy) {
     // Resize the copy to match input
     copy.resize(input.size());
     // Convert the input string to uppercase and store it in copy
     transform(input.begin(), input.end(), copy.begin(), ::toupper);
 }
 
-vector<int> stringToIntVector(string& input) {
+vector<int> stringToIntVector(const string& input) {
     // Initialize int vector
     vector<int> result;
     // Initialize stringstream on input and string token
@@ -114,8 +114,28 @@ vector<int> stringToIntVector(string& input) {
     return result;
 }
 
-bool isNumericString(std::string &input)
-{
+vector<long long> stringToLongLongVector(const string& input) {
+    // Initialize long long vector
+    vector<long long> result;
+    // Initialize stringstream on input and string token
+    stringstream ss(input);
+    string token;
+
+    // Loop over string, tokenize by commas
+    while(getline(ss, token, ',')) {
+        try { // Attempt to convert token to a long long and push back onto result
+            result.push_back(stoll(token));
+        } catch(...) { // Catch unconvertable type, error and skip
+            cout << "ERROR: Invalid input '" << token << "'. Please only enter long longs. Skipping..." << endl;
+            continue;
+        }
+    }
+
+    // Return the result
+    return result;
+}
+
+bool isNumericString(const string& input) {
     // Return true if all characters in input are digits, false otherwise
     return all_of(input.begin(), input.end(), ::isdigit);
 }

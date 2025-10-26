@@ -21,40 +21,42 @@ inline std::set<std::string> quitMode = {"quit", "[q]uit", "q", "[q]"};
 
 /* FUNCTIONS */
 // Print the program start banner
-void printStartBanner(const std::string title);
+void printStartBanner(const std::string& title);
 // Print the program start banner with time and space complexity
-void printStartBanner(const std::string title, const std::string timeComplexity, const std::string spaceComplexity);
+void printStartBanner(const std::string& title, const std::string& timeComplexity, const std::string& spaceComplexity);
 // Get mode to run program in from user
 std::string selectMode();
 // Bool for if mode is in custom mode
-bool isCustomMode(const std::string mode);
+bool isCustomMode(const std::string& mode);
 // Print custom mode banner
 void customModeSelected();
 // Bool for if mode is in demo mode
-bool isDemoMode(const std::string mode);
+bool isDemoMode(const std::string& mode);
 // Print demo mode banner
 void demoModeSelected();
 // Bool for if mode is in exit mode
-bool isExitMode(const std::string mode);
+bool isExitMode(const std::string& mode);
 // Print exit mode banner
 void exitModeSelected();
 // Bool for if mode is in quit mode
-bool isQuitMode(const std::string mode);
+bool isQuitMode(const std::string& mode);
 // Print quit mode banner and return 0
 int quitModeSelected();
 // Print unknown mode banner and return -1
-int unknownModeSelected(const std::string mode);
+int unknownModeSelected(const std::string& mode);
 // Convert input to lowercase in-place
 void toLowercase(std::string& input);
 // Convert input to lowercase and store in copy
-void toLowercase(std::string& input, std::string& copy);
+void toLowercase(const std::string& input, std::string& copy);
 // Convert input to uppercase in-place
 void toUppercase(std::string& input);
 // Convert input to uppercase and store in copy
-void toUppercase(std::string& input, std::string& copy);
+void toUppercase(const std::string& input, std::string& copy);
 // Convert comma-seperated string to int vector
-std::vector<int> stringToIntVector(std::string& input);
+std::vector<int> stringToIntVector(const std::string& input);
+// Convert comma-seperated string to long long vector
+std::vector<long long> stringToLongLongVector(const std::string& input);
 // Return true if string is numeric, false otherwise
-bool isNumericString(std::string& input);
+bool isNumericString(const std::string& input);
 
 #endif
