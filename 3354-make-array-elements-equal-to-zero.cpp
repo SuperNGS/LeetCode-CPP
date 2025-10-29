@@ -9,23 +9,30 @@ using namespace std;
 class Solution {
 public:
     int countValidSelections(vector<int>& nums) {
+        // Initialize int result to 0
         int result = 0;
 
+        // Set an iterator to the beginning of nums
         auto it = nums.begin();
+
+        // Loop while there are more 0s in nums
         while ((it = find(it, nums.end(), 0)) != nums.end()) {
+            // Calculate left and right sums and their absolute difference
             int left_sum = accumulate(nums.begin(), it, 0);
             int right_sum = accumulate(it, nums.end(), 0);
             int diff = abs(left_sum - right_sum);
 
-            if(diff == 1) {
+            if(diff == 1) { // If difference is 1, increment result by 1 (one valid path)
                 result++;
-            } else if(diff == 0) {
+            } else if(diff == 0) { // If difference is 0, increment result by 2 (two valid paths)
                 result += 2;
             }
 
+            // Move iterator to the next element
             it++;
         }
 
+        // Return result
         return result;
     }
 };
